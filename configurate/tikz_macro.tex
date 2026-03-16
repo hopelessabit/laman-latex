@@ -1,0 +1,338 @@
+% ============================================================
+% CUSTOM TIKZ MACROS FOR SPLIT ELLIPSE AND CIRCLE
+% ============================================================
+% This file contains reusable TikZ commands for drawing ellipses
+% and circles with split styling (solid/dotted segments)
+% ============================================================
+
+% Required packages (ensure these are loaded in main document):
+% \usetikzlibrary{calc}
+% \usepackage{ifthen}
+
+% ============================================================
+% HELPER: \GetPointXYcm
+% Get point coordinates in cm WITHOUT outer transforms
+% (works correctly even with scale/rotate on tikzpicture)
+%
+% Usage: \GetPointXYcm{(x,y)}{\outX}{\outY}
+%   Outputs \outX, \outY as decimal cm values (globally defined)
+% ============================================================
+\makeatletter
+\newcommand{\GetPointXYcm}[3]{%
+  \begin{scope}[reset cm]%
+    \path #1;%
+    \global\edef#2{\the\pgf@x}%
+    \global\edef#3{\the\pgf@y}%
+  \end{scope}%
+  \pgfmathsetmacro#2{#2/1cm}%
+  \pgfmathsetmacro#3{#3/1cm}%
+}
+\makeatother
+
+% ============================================================
+% COMMAND 1: \drawSplitEllipse (WITH ROTATION SUPPORT)
+% ============================================================
+% Usage:
+% \drawSplitEllipse{centerX}{centerY}{rotationAngle}{semiMajor}{semiMinor}{intersectD}{intersectE}{style1}{style2}
+%
+% Parameters:
+%   #1, #2: Ellipse center coordinates (x, y)
+%   #3:     Rotation angle in degrees
+%   #4:     Semi-major axis (a)
+%   #5:     Semi-minor axis (b)
+%   #6, #7: Two intersection points (D, E)
+%   #8:     Style for first part (e.g., "Solid" or "Dot")
+%   #9:     Style for second part (e.g., "Dot" or "Solid")
+% ============================================================
+
+\newcommand{\drawSplitEllipse}[9]{
+    % Save the ellipse parameters
+    \def\centerX{#1}
+    \def\centerY{#2}
+    \def\rotAngle{#3}
+    \def\semiA{#4}
+    \def\semiB{#5}
+    
+    % Save intersection points
+    \coordinate (InterD) at #6;
+    \coordinate (InterE) at #7;
+    
+    % -------------------------------------------------------
+    % STEP 1: Extract x,y coordinates from points (UNTRANSFORMED)
+    % -------------------------------------------------------
+    \GetPointXYcm{#6}{\dX}{\dY}
+    \GetPointXYcm{#7}{\eX}{\eY}
+    
+    % -------------------------------------------------------
+    % STEP 2: Convert intersection points to local coordinates
+    % Translate to center, then rotate by -rotAngle
+    % -------------------------------------------------------
+    % For point D:
+    \pgfmathsetmacro{\dRelX}{\dX - \centerX}
+    \pgfmathsetmacro{\dRelY}{\dY - \centerY}
+    \pgfmathsetmacro{\dLocalX}{\dRelX * cos(-\rotAngle) - \dRelY * sin(-\rotAngle)}
+    \pgfmathsetmacro{\dLocalY}{\dRelX * sin(-\rotAngle) + \dRelY * cos(-\rotAngle)}
+    
+    % For point E:
+    \pgfmathsetmacro{\eRelX}{\eX - \centerX}
+    \pgfmathsetmacro{\eRelY}{\eY - \centerY}
+    \pgfmathsetmacro{\eLocalX}{\eRelX * cos(-\rotAngle) - \eRelY * sin(-\rotAngle)}
+    \pgfmathsetmacro{\eLocalY}{\eRelX * sin(-\rotAngle) + \eRelY * cos(-\rotAngle)}
+    
+    % -------------------------------------------------------
+    % STEP 3: Calculate parametric angles
+    % t = atan2(y/b, x/a) - CORRECTED FORMULA
+    % -------------------------------------------------------
+    \pgfmathsetmacro{\angD}{atan2(\dLocalY/\semiB, \dLocalX/\semiA)}
+    \pgfmathsetmacro{\angE}{atan2(\eLocalY/\semiB, \eLocalX/\semiA)}
+    
+    % Normalize to [0,360)
+    \pgfmathsetmacro{\aD}{mod(\angD+360,360)}
+    \pgfmathsetmacro{\aE}{mod(\angE+360,360)}
+    
+    % CCW sweep from D to E in [0,360)
+    \pgfmathsetmacro{\dCCW}{mod(\aE-\aD+360,360)}
+    
+    % Precompute arc end angles (avoids PGF expression issues inside arc)
+    \pgfmathsetmacro{\aDplus}{\aD+360}
+    \pgfmathsetmacro{\aEplus}{\aE+360}
+    \pgfmathsetmacro{\aEminus}{\aE-360}
+    
+    % -------------------------------------------------------
+    % STEP 4: Determine styles based on input
+    % -------------------------------------------------------
+    \ifthenelse{\equal{#8}{Solid}}{%
+        \tikzset{styleOne/.style={thick, solid}}%
+    }{%
+        \tikzset{styleOne/.style={thick, dotted}}%
+    }
+    
+    \ifthenelse{\equal{#9}{Solid}}{%
+        \tikzset{styleTwo/.style={thick, solid}}%
+    }{%
+        \tikzset{styleTwo/.style={thick, dotted}}%
+    }
+    
+    % -------------------------------------------------------
+    % STEP 5: Draw the two ellipse arcs with proper direction
+    % -------------------------------------------------------
+    \begin{scope}[shift={(\centerX,\centerY)}, rotate=\rotAngle]
+        % If CCW sweep <= 180: arc1 is the short CCW arc D->E
+        % else: arc1 is the short CW arc D->E (by using end<start)
+        \pgfmathparse{\dCCW <= 180 ? 1 : 0}
+        \ifnum\pgfmathresult=1
+            % Arc 1 (short, CCW): D -> E
+            \draw[styleOne] 
+                (\aD:\semiA cm and \semiB cm) 
+                arc (\aD:\aE:\semiA cm and \semiB cm);
+            
+            % Arc 2 (remaining, CCW): E -> D+360
+            \draw[styleTwo] 
+                (\aE:\semiA cm and \semiB cm) 
+                arc (\aE:\aDplus:\semiA cm and \semiB cm);
+        \else
+            % Arc 1 (short, CW): D -> E (end = aE-360 < aD)
+            \draw[styleOne] 
+                (\aD:\semiA cm and \semiB cm) 
+                arc (\aD:\aEminus:\semiA cm and \semiB cm);
+            
+            % Arc 2 (remaining, CCW): (aE-360) -> aD
+            \draw[styleTwo] 
+                (\aEminus:\semiA cm and \semiB cm) 
+                arc (\aEminus:\aD:\semiA cm and \semiB cm);
+        \fi
+    \end{scope}
+}
+
+% ============================================================
+% COMMAND 2: \drawSplitEllipseSimple (NO ROTATION)
+% ============================================================
+% Simplified version for ellipses with rotation angle = 0
+%
+% Usage:
+% \drawSplitEllipseSimple{centerX}{centerY}{semiMajor}{semiMinor}{intersectD}{intersectE}{style1}{style2}
+%
+% Parameters:
+%   #1, #2: Ellipse center coordinates (x, y)
+%   #3, #4: Semi-major (a), Semi-minor (b)
+%   #5, #6: Two intersection points (D, E)
+%   #7, #8: Styles ("Solid" or "Dot")
+% ============================================================
+
+\newcommand{\drawSplitEllipseSimple}[8]{
+    % Save parameters
+    \def\centerX{#1}
+    \def\centerY{#2}
+    \def\semiA{#3}
+    \def\semiB{#4}
+    
+    % Extract x,y coordinates from points (UNTRANSFORMED)
+    \GetPointXYcm{#5}{\dX}{\dY}
+    \GetPointXYcm{#6}{\eX}{\eY}
+    
+    % Calculate angles for intersection points
+    % Relative to ellipse center (no rotation needed)
+    \pgfmathsetmacro{\dRelX}{\dX - \centerX}
+    \pgfmathsetmacro{\dRelY}{\dY - \centerY}
+    \pgfmathsetmacro{\eRelX}{\eX - \centerX}
+    \pgfmathsetmacro{\eRelY}{\eY - \centerY}
+    
+    % Correct param angles for ellipse
+    \pgfmathsetmacro{\angD}{atan2(\dRelY/\semiB, \dRelX/\semiA)}
+    \pgfmathsetmacro{\angE}{atan2(\eRelY/\semiB, \eRelX/\semiA)}
+    
+    % Normalize to [0,360)
+    \pgfmathsetmacro{\aD}{mod(\angD+360,360)}
+    \pgfmathsetmacro{\aE}{mod(\angE+360,360)}
+    
+    % CCW sweep from D to E in [0,360)
+    \pgfmathsetmacro{\dCCW}{mod(\aE-\aD+360,360)}
+    
+    % Precompute arc end angles (avoids PGF expression issues inside arc)
+    \pgfmathsetmacro{\aDplus}{\aD+360}
+    \pgfmathsetmacro{\aEplus}{\aE+360}
+    \pgfmathsetmacro{\aEminus}{\aE-360}
+    
+    % Styles
+    \ifthenelse{\equal{#7}{Solid}}{%
+        \tikzset{styleOne/.style={thick, solid}}%
+    }{%
+        \tikzset{styleOne/.style={thick, dotted}}%
+    }
+    
+    \ifthenelse{\equal{#8}{Solid}}{%
+        \tikzset{styleTwo/.style={thick, solid}}%
+    }{%
+        \tikzset{styleTwo/.style={thick, dotted}}%
+    }
+    
+    \begin{scope}[shift={(\centerX,\centerY)}]
+        % If CCW sweep <= 180: arc1 is the short CCW arc D->E
+        % else: arc1 is the short CW arc D->E (by using end<start)
+        \pgfmathparse{\dCCW <= 180 ? 1 : 0}
+        \ifnum\pgfmathresult=1
+            % Arc 1 (short, CCW): D -> E
+            \draw[styleOne] 
+                (\aD:\semiA cm and \semiB cm) 
+                arc (\aD:\aE:\semiA cm and \semiB cm);
+            
+            % Arc 2 (remaining, CCW): E -> D+360
+            \draw[styleTwo] 
+                (\aE:\semiA cm and \semiB cm) 
+                arc (\aE:\aDplus:\semiA cm and \semiB cm);
+        \else
+            % Arc 1 (short, CW): D -> E (end = aE-360 < aD)
+            \draw[styleOne] 
+                (\aD:\semiA cm and \semiB cm) 
+                arc (\aD:\aEminus:\semiA cm and \semiB cm);
+            
+            % Arc 2 (remaining, CCW): (aE-360) -> aD
+            \draw[styleTwo] 
+                (\aEminus:\semiA cm and \semiB cm) 
+                arc (\aEminus:\aD:\semiA cm and \semiB cm);
+        \fi
+    \end{scope}
+}
+
+% ============================================================
+% COMMAND 3: \drawSplitCircle
+% ============================================================
+% Draw a circle split into two arcs with different styles.
+% Circle is rotation-invariant, so no rotation handling needed.
+%
+% Usage:
+% \drawSplitCircle{centerX}{centerY}{radius}{intersectD}{intersectE}{style1}{style2}
+%
+% Parameters:
+%   #1, #2: Circle center coordinates (x, y)
+%   #3:     Radius
+%   #4, #5: Two intersection points (D, E) on the circle
+%   #6:     Style for short arc D->E  ("Solid" or "Dot")
+%   #7:     Style for remaining arc E->D  ("Solid" or "Dot")
+% ============================================================
+
+\newcommand{\drawSplitCircle}[7]{%
+    % -------------------------------------------------------
+    % STEP 1: Determine styles based on input
+    % -------------------------------------------------------
+    \ifthenelse{\equal{#6}{Solid}}{%
+        \tikzset{styleOne/.style={thick, solid}}%
+    }{%
+        \tikzset{styleOne/.style={thick, dotted}}%
+    }
+    \ifthenelse{\equal{#7}{Solid}}{%
+        \tikzset{styleTwo/.style={thick, solid}}%
+    }{%
+        \tikzset{styleTwo/.style={thick, dotted}}%
+    }%
+    
+    % -------------------------------------------------------
+    % STEP 2: Extract x,y coordinates from points D and E (UNTRANSFORMED)
+    % -------------------------------------------------------
+    \GetPointXYcm{#4}{\dX}{\dY}
+    \GetPointXYcm{#5}{\eX}{\eY}
+    
+    % -------------------------------------------------------
+    % STEP 3: Translate to circle's local frame (center = 0,0)
+    % -------------------------------------------------------
+    \pgfmathsetmacro{\xD}{\dX - (#1)}
+    \pgfmathsetmacro{\yD}{\dY - (#2)}
+    \pgfmathsetmacro{\xE}{\eX - (#1)}
+    \pgfmathsetmacro{\yE}{\eY - (#2)}
+    
+    % -------------------------------------------------------
+    % STEP 4: Compute parametric angles using atan2(y, x)
+    % -------------------------------------------------------
+    \pgfmathsetmacro{\angD}{atan2(\yD, \xD)}
+    \pgfmathsetmacro{\angE}{atan2(\yE, \xE)}
+    
+    % Normalize to [0,360)
+    \pgfmathsetmacro{\aD}{mod(\angD+360,360)}
+    \pgfmathsetmacro{\aE}{mod(\angE+360,360)}
+    
+    % CCW sweep from D to E in [0,360)
+    \pgfmathsetmacro{\dCCW}{mod(\aE-\aD+360,360)}
+    
+    % Precompute arc end angles (avoids PGF expression issues inside arc)
+    \pgfmathsetmacro{\aDplus}{\aD+360}
+    \pgfmathsetmacro{\aEplus}{\aE+360}
+    
+    % -------------------------------------------------------
+    % STEP 5: Draw the two arcs; short arc gets styleOne
+    % -------------------------------------------------------
+    \begin{scope}[shift={(#1,#2)}]
+        \ifdim \dCCW pt < 180.001pt
+            % Short arc is CCW: D -> E
+            \draw[styleOne]
+                (\aD:#3) arc[start angle=\aD, end angle=\aE, radius=#3];
+            % Remaining arc: E -> D+360
+            \draw[styleTwo]
+                (\aE:#3) arc[start angle=\aE, end angle=\aDplus, radius=#3];
+        \else
+            % Short arc is CW: equivalent to CCW from E -> D
+            \draw[styleOne]
+                (\aE:#3) arc[start angle=\aE, end angle=\aD, radius=#3];
+            % Remaining arc: D -> E+360
+            \draw[styleTwo]
+                (\aD:#3) arc[start angle=\aD, end angle=\aEplus, radius=#3];
+        \fi
+    \end{scope}%
+}
+
+% ============================================================
+% USAGE EXAMPLES (commented out):
+% ============================================================
+% 
+% Example 1: Ellipse with rotation
+% \drawSplitEllipse{0}{0}{0}{6}{4.472}{(-4.196,-3.196)}{(2.911,3.911)}{Solid}{Dot}
+% 
+% Example 2: Swap solid/dotted
+% \drawSplitEllipse{0}{0}{0}{6}{4.472}{(-4.196,-3.196)}{(2.911,3.911)}{Dot}{Solid}
+% 
+% Example 3: Simplified version (no rotation)
+% \drawSplitEllipseSimple{0}{0}{6}{4.472}{(-4.196,-3.196)}{(2.911,3.911)}{Solid}{Dot}
+% 
+% Example 4: Split circle
+% \drawSplitCircle{0}{0}{3}{(3,0)}{(0,3)}{Solid}{Dot}
+% 
+% ============================================================

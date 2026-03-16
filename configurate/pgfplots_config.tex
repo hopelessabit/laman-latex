@@ -1,0 +1,94 @@
+% =============================================================
+% pgfplots_config.tex
+% Global pgfplots style configuration.
+% \usepackage{pgfplots} and \pgfplotsset{compat=...} are in
+% preamble_1.tex — do NOT repeat them here.
+% =============================================================
+
+% -------------------------
+% Global defaults for every axis
+% -------------------------
+\pgfplotsset{
+  every axis/.append style={
+    axis line style={black, line width=0.5pt},
+    tick style={black, line width=0.4pt},
+    tick label style={font=\scriptsize},
+    label style={font=\scriptsize},
+    title style={font=\scriptsize},
+    axis on top=true,
+    samples=150,
+    scaled ticks=false,
+    grid=none,
+  }
+}
+
+% -------------------------
+% Grid control shorthands
+% -------------------------
+\pgfplotsset{
+  grid on/.style={
+    grid=both,
+    major grid style={draw=gray!45, line width=0.25pt},
+    minor grid style={draw=gray!25, line width=0.1pt},
+  },%
+  grid off/.style={
+    grid=none,
+  },%
+}
+
+% -------------------------
+% Axis styles
+% -------------------------
+\pgfplotsset{
+  % Base: common range, labels, size
+  base/.style={
+    width=5cm,
+    height=5cm,
+    xmin=-5.2, xmax=5.2,
+    ymin=-5.2, ymax=5.2,
+    xlabel={$x$},
+    ylabel={$y$},
+    tick label style={font=\scriptsize},
+    label style={font=\scriptsize},
+  },%
+  % Cartesian: centred axes with minor grid ticks, labels pushed outside
+  cartesian/.style={
+    base,
+    axis x line=middle,
+    axis y line=middle,
+    xtick={-5,-4,...,5},
+    ytick={-5,-4,...,5},
+    minor tick num=0,
+    % xlabel style={at={(axis description cs:1.03,0.52)}, anchor=west},
+    % ylabel style={at={(axis description cs:0.52,1.03)}, anchor=south},
+  },%
+  % Exam: centred axes, clean look, no grid, no minor ticks
+  exam/.style={
+    base,
+    axis x line=middle,
+    axis y line=middle,
+    minor tick num=0,
+  },%
+}
+
+% -------------------------
+% Plot styles
+% -------------------------
+\pgfplotsset{
+  % Standard function curve
+  function/.style={
+    black,
+    thick,
+  },%
+  % Curve with discontinuities / asymptotes
+  discontinuity/.style={
+    thick,
+    unbounded coords=jump,
+  },%
+  % Scatter / marked points only
+  points/.style={
+    only marks,
+    mark=*,
+    mark size=2pt,
+  },%
+}

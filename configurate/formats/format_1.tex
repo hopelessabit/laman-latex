@@ -1,0 +1,81 @@
+% =========================
+% A) Global settings
+% =========================
+\setlist[itemize]{leftmargin=*, itemsep=3pt, topsep=3pt}
+\setlist[enumerate]{leftmargin=*, itemsep=3pt, topsep=3pt}
+
+\tcbset{
+  enhanced,
+  sharp corners=all,
+  boxrule=0.8pt,
+  colback=white,
+  colframe=Black!70,
+  left=10pt,right=10pt,top=10pt,bottom=10pt
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{Chuyên đề: Phương trình chứa căn}}
+\rhead{\textit{Tóm tắt + Ví dụ + Bài tập}}
+\cfoot{\thepage}
+
+\titleformat{\section}
+  {\Large\bfseries\color{MidnightBlue}}
+  {\thesection}{0.6em}{}
+\titleformat{\subsection}
+  {\large\bfseries\color{RoyalBlue}}
+  {}{0em}{}
+
+% =========================
+% B) Commands (hàm dùng chung)
+% =========================
+\newcommand{\DK}{\textbf{ĐKXĐ}}
+\newcommand{\Buoc}{\textbf{Bước}}
+
+% 3-column table helper (auto-wrap, ragged-left, small font)
+\newcommand{\ThreeColTab}[1]{%
+\small
+\setlength{\tabcolsep}{6pt}%
+\renewcommand{\arraystretch}{1.28}%
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}%
+#1
+\end{tabularx}%
+\normalsize
+}
+
+% (optional) nếu muốn gọi nhanh 1 dòng công thức
+\newcommand{\m}[1]{\(\displaystyle #1\)}
+
+% =========================
+% C) Box styles
+% =========================
+\newtcolorbox{theorybox}[1]{
+  colframe=MidnightBlue!75,
+  colback=MidnightBlue!3,
+  title=\textbf{Lý thuyết -- #1}
+}
+\newtcolorbox{memorybox}[1]{
+  colframe=ForestGreen!70,
+  colback=ForestGreen!4,
+  title=\textbf{Cách nhớ dí dỏm -- #1}
+}
+\newtcolorbox{examplebox}[1]{
+  colframe=BurntOrange!85,
+  colback=BurntOrange!4,
+  title=\textbf{Ví dụ mẫu -- #1}
+}
+\newtcolorbox{exercisebox}[1]{
+  colframe=RoyalBlue!75,
+  colback=RoyalBlue!3,
+  title=\textbf{Bài tập luyện tập -- #1}
+}
+\newtcolorbox{answerbox}[1]{
+  colframe=Black!65,
+  colback=Black!2,
+  title=\textbf{Đáp án tham khảo -- #1}
+}
+\newtcolorbox{noteBox}{
+  colframe=Black!55,
+  colback=Black!2,
+  title=\textbf{Ghi nhớ nhanh}
+}

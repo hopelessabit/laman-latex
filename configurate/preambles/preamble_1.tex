@@ -1,0 +1,148 @@
+% =========================
+% 1) Page / spacing
+% =========================
+\usepackage[a4paper,margin=1.3cm]{geometry}
+\usepackage{setspace}
+% \setstretch{1.02}
+\setstretch{1}
+\usepackage{microtype}
+\usepackage{parskip}
+% =========================
+% 2) Fonts (XeLaTeX + Vietnamese)
+% =========================
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{JetBrains Mono}
+
+% =========================
+% 3) Math
+% =========================
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{unicode-math}
+\setmathfont{TeX Gyre Termes Math}
+
+% =========================
+% 4) Colors / Boxes
+% =========================
+\usepackage[dvipsnames]{xcolor}
+\usepackage[most]{tcolorbox}
+
+% =========================
+% 5) Tables
+% =========================
+\usepackage{tabularx}
+\usepackage{array}
+
+% =========================
+% 6) Lists
+% =========================
+\usepackage{enumitem}
+
+% =========================
+% 7) Header/Footer
+% =========================
+\usepackage{fancyhdr}
+
+% =========================
+% 8) Section styling
+% =========================
+\usepackage{titlesec}
+
+% =========================
+% 9) Hyperlinks
+% =========================
+\usepackage[hidelinks]{hyperref}
+
+% =========================
+% TikZ / PGF
+% =========================
+\usepackage{ifthen}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{calc,arrows.meta,positioning}
+\tikzset{
+    ultra thin/.style= {line width=0.1pt},
+    very thin/.style=  {line width=0.2pt},
+    thin/.style=       {line width=0.4pt},% thin is the default
+    semithick/.style=  {line width=0.6pt},
+    thick/.style=      {line width=0.8pt},
+    very thick/.style= {line width=1.2pt},
+    ultra thick/.style={line width=1.6pt}
+}
+\tikzset{every path/.style={thick}}
+
+
+% =========================================================
+% Configurable design variables  (override after \input{preamble_1})
+% =========================================================
+
+% ---- List spacing ----
+\newlength{\GDListItemSep}  \setlength{\GDListItemSep}{2pt}
+\newlength{\GDListTopSep}   \setlength{\GDListTopSep}{2pt}
+
+% ---- Global tcolorbox defaults ----
+\newlength{\GDBoxArc}          \setlength{\GDBoxArc}{3mm}
+\newlength{\GDDefaultBoxRule}  \setlength{\GDDefaultBoxRule}{0.8pt}
+\newlength{\GDBoxPadH}         \setlength{\GDBoxPadH}{10pt}   % left & right
+\newlength{\GDBoxPadV}         \setlength{\GDBoxPadV}{10pt}   % top  & bottom
+
+% ---- Box rule variants ----
+\newlength{\GDExampleBoxRule}  \setlength{\GDExampleBoxRule}{0.9pt}  % example/practice/question
+\newlength{\GDDangBoxRule}     \setlength{\GDDangBoxRule}{1.0pt}     % Dạng box
+
+% ---- Problem bar padding (top/bottom differs from global) ----
+\newlength{\GDProblemBarPadV}  \setlength{\GDProblemBarPadV}{8pt}
+
+% ---- ChapterBanner ----
+\newlength{\ChapterBannerBelowSkip}  \setlength{\ChapterBannerBelowSkip}{0.35cm}
+
+% ---- LessonLine ----
+\newlength{\LessonLineBelowSkip}  \setlength{\LessonLineBelowSkip}{0.5cm}
+
+% ---- SectionRibbon ----
+\newlength{\SectionRibbonAboveSkip}  \setlength{\SectionRibbonAboveSkip}{0cm}
+\newlength{\SectionRibbonBelowSkip}  \setlength{\SectionRibbonBelowSkip}{0cm}
+
+% ---- GDSubHeader ----
+\newlength{\GDSubHeaderAboveSkip}  \setlength{\GDSubHeaderAboveSkip}{2pt}
+\newlength{\GDSubHeaderBelowSkip}  \setlength{\GDSubHeaderBelowSkip}{4pt}
+
+% ---- Lời giải / Solution block ----
+\newlength{\LoigiaiTitleAboveSkip}  \setlength{\LoigiaiTitleAboveSkip}{0.15cm}
+\newlength{\GDSolutionVAdjust}      \setlength{\GDSolutionVAdjust}{2pt}
+
+% ---- Dotted writing lines ----
+\newlength{\DottedLineGap}    \setlength{\DottedLineGap}{0.35cm}
+\newlength{\DottedLineWidth}  \setlength{\DottedLineWidth}{0.9pt}
+
+% ---- Header / footer rule ----
+\newlength{\GDHeaderRuleWidth}  \setlength{\GDHeaderRuleWidth}{1.2pt}
+
+% ---- Answer checkbox mark ----
+\newlength{\GDAnswerMarkOffset}  \setlength{\GDAnswerMarkOffset}{14pt}
+\newlength{\GDAnswerMarkSize}    \setlength{\GDAnswerMarkSize}{9pt}
+
+% ---- GDTag inline label padding ----
+\newlength{\GDTagPadX}  \setlength{\GDTagPadX}{6pt}
+\newlength{\GDTagPadY}  \setlength{\GDTagPadY}{2pt}
+
+% ---- ThreeColTab column separator ----
+\newlength{\ThreeColTabSep}  \setlength{\ThreeColTabSep}{6pt}
+
+% ---- Dfrac spacing ----
+% \GDDfracNumPad  = extra height added above fraction bar (numerator side)
+% \GDDfracDenPad  = extra depth  added below fraction bar (denominator side)
+\newlength{\GDDfracNumPad}  \setlength{\GDDfracNumPad}{3pt}
+\newlength{\GDDfracDenPad}  \setlength{\GDDfracDenPad}{3pt}
+\makeatletter
+\newcommand{\GD@dfracwrap}[2]{%
+  \GD@origdfrac{\rule{0pt}{\dimexpr\ht\Mathstrutbox@+\GDDfracNumPad\relax}#1}%
+               {\rule[-\dimexpr\dp\Mathstrutbox@+\GDDfracDenPad\relax]{0pt}{\dp\Mathstrutbox@}#2}%
+}
+\AtBeginDocument{%
+  \let\GD@origdfrac\dfrac
+  \let\dfrac\GD@dfracwrap
+}
+\makeatother

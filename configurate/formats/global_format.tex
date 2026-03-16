@@ -1,0 +1,120 @@
+% =========================================================
+% global_format.tex
+% Common settings and commands shared across format_1.tex,
+% format_2.tex, and format_exam.tex.
+%
+% Load this file BEFORE loading any individual format:
+%   \input{configurate/formats/global_format}
+%   \input{configurate/formats/format_2}   % or format_1 / format_exam
+%
+% Target compiler: XeLaTeX
+% =========================================================
+
+% -------------------------
+% 1) Packages common to multiple formats
+% -------------------------
+\RequirePackage{etoolbox}    % format_2, format_exam
+\RequirePackage{calc}        % format_2, format_exam
+\tcbuselibrary{skins,breakable}  % format_2, format_exam
+
+% -------------------------
+% 2) GD color palette
+% providecolor is safe regardless of loading order and avoids
+% "already defined" errors when format_2 or format_exam is loaded.
+% -------------------------
+\providecolor{GDBlue}{HTML}{127BBE}       % cyan/blue headings
+\providecolor{GDDeepBlue}{HTML}{0D67B5}   % strong blue bars
+\providecolor{GDPink}{HTML}{C1007A}       % magenta ribbon
+\providecolor{GDOrange}{HTML}{C8741D}     % orange exercise bar
+\providecolor{GDPurple}{HTML}{6D2C91}     % purple Dạng box
+\providecolor{GDTeal}{HTML}{0E8C8C}       % teal section number
+\providecolor{GDLiteBlue}{HTML}{EAF5FF}   % light blue box background
+\providecolor{GDLiteGray}{HTML}{F5F7FA}   % light gray background
+
+% -------------------------
+% 3) List spacing
+% Uses the length macros declared in preamble_1; falls back to 3pt
+% if this file is loaded without that preamble.
+% -------------------------
+\@ifundefined{GDListItemSep}{%
+  \newlength{\GDListItemSep}\setlength{\GDListItemSep}{3pt}%
+  \newlength{\GDListTopSep} \setlength{\GDListTopSep}{3pt}%
+}{}
+\setlist[itemize] {leftmargin=*, itemsep=\GDListItemSep, topsep=\GDListTopSep}
+\setlist[enumerate]{leftmargin=*, itemsep=\GDListItemSep, topsep=\GDListTopSep}
+
+% -------------------------
+% 4) Global tcolorbox base defaults
+% (common subset shared by all formats)
+% -------------------------
+\tcbset{
+  enhanced,
+  breakable,
+  colback=white,
+}
+
+% -------------------------
+% 5) Inline colored tag helper
+% Used in box titles across format_2 and format_exam.
+% providecommand lets each format override with its own padding.
+% -------------------------
+\providecommand{\GDTag}[2]{%
+  \tikz[baseline=(n.base)]\node (n) [fill=#1, text=white, font=\bfseries\footnotesize,
+    rounded corners=2pt, inner xsep=6pt, inner ysep=2pt] {#2};%
+}
+
+% -------------------------
+% 6) Math display shorthand
+% \m{expr}  ->  \(\displaystyle expr\)
+% Shared by format_1 and format_2.
+% -------------------------
+\providecommand{\m}[1]{\(\displaystyle #1\)}
+
+% -------------------------
+% 7) Vietnamese shorthands
+% Shared by format_1 and format_2.
+% -------------------------
+\providecommand{\DK}{\textbf{ĐKXĐ}}
+\providecommand{\Buoc}{\textbf{Bước}}
+
+% -------------------------
+% 8) Three-column auto-wrap table helper
+% Shared by format_1 and format_2.
+% Uses \ThreeColTabSep from preamble_1 if available; defaults to 6pt.
+% -------------------------
+\@ifundefined{ThreeColTabSep}{%
+  \newlength{\ThreeColTabSep}\setlength{\ThreeColTabSep}{6pt}%
+}{}
+\providecommand{\ThreeColTab}[1]{%
+  \small
+  \setlength{\tabcolsep}{\ThreeColTabSep}%
+  \renewcommand{\arraystretch}{1.28}%
+  \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X
+      >{\raggedright\arraybackslash}X
+      >{\raggedright\arraybackslash}X@{}}%
+    #1
+  \end{tabularx}%
+  \normalsize
+}
+
+% -------------------------
+% 9) Dotted writing lines
+% format_2 uses \DottedLines; format_exam uses \ExamDottedLines.
+% Both are provided here.  Individual format files may redefine them.
+% -------------------------
+\@ifundefined{DottedLineWidth}{%
+  \newlength{\DottedLineWidth}\setlength{\DottedLineWidth}{0.4pt}%
+  \newlength{\DottedLineGap}  \setlength{\DottedLineGap}{6pt}%
+}{}
+
+% \DottedLines{N} — N dotted lines in GDBlue
+\providecommand{\DottedLines}[1]{%
+  \par\noindent
+  \foreach \i in {1,...,#1}{%
+    \noindent\tikz{\draw[GDBlue!70, dotted, line width=\DottedLineWidth]
+      (0,0) -- (\linewidth,0);}\\[\DottedLineGap]%
+  }%
+}
+
+% \ExamDottedLines{N} — alias used in format_exam
+\providecommand{\ExamDottedLines}[1]{\DottedLines{#1}}

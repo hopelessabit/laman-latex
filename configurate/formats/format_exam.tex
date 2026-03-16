@@ -1,0 +1,485 @@
+% =========================================================
+% format_exam.tex
+% Exam / test layout compatible with preamble_1.tex
+% Style direction aligned with format_2.tex
+% Target compiler: XeLaTeX
+% =========================================================
+
+% -------------------------
+% 0) Extra packages not already in preamble_1
+% -------------------------
+\RequirePackage{xparse}
+\RequirePackage{etoolbox}
+\RequirePackage{calc}
+\RequirePackage{lastpage}
+\tcbuselibrary{skins,breakable}
+
+% -------------------------
+% 1) Colors / visual identity
+% -------------------------
+% Reuse existing palette names from format_2 when possible.
+% If format_2 is not loaded, define them here.
+\providecolor{GDBlue}{HTML}{127BBE}
+\providecolor{GDDeepBlue}{HTML}{0000FF}
+\providecolor{GDPink}{HTML}{C1007A}
+\providecolor{GDOrange}{HTML}{C8741D}
+\providecolor{GDPurple}{HTML}{6D2C91}
+\providecolor{GDTeal}{HTML}{0E8C8C}
+\providecolor{GDLiteBlue}{HTML}{EAF5FF}
+\providecolor{GDLiteGray}{HTML}{F5F7FA}
+
+% -------------------------
+% 2) Local helper lengths (safe defaults if not declared)
+% -------------------------
+\providecommand{\GDExamHeaderRule}{1.0pt}
+\newlength{\GDExamTitleSep}      \setlength{\GDExamTitleSep}{0.05cm}
+\newlength{\GDExamBlockSep}      \setlength{\GDExamBlockSep}{0.05cm}
+\newlength{\GDExamChoiceSep}     \setlength{\GDExamChoiceSep}{10pt}
+\newlength{\GDExamChoiceRowSep}  \setlength{\GDExamChoiceRowSep}{5pt}
+\newlength{\GDExamPartAfterSkip} \setlength{\GDExamPartAfterSkip}{0pt}
+\newlength{\GDExamQuestionSkip}  \setlength{\GDExamQuestionSkip}{0pt}
+
+% -------------------------
+% 3) Small inline tag helper
+% -------------------------
+\providecommand{\GDTag}[2]{%
+  \tikz[baseline=(n.base)]\node (n) [fill=#1, text=white, font=\bfseries\footnotesize,
+    rounded corners=2pt, inner xsep=6pt, inner ysep=2pt] {#2};%
+}
+
+% -------------------------
+% 4) Header information
+% -------------------------
+\makeatletter
+\newcommand{\SchoolName}[1]{\gdef\GD@SchoolName{#1}}
+\newcommand{\ExamTitle}[1]{\gdef\GD@ExamTitle{#1}}
+\newcommand{\SubjectName}[1]{\gdef\GD@SubjectName{#1}}
+\newcommand{\ExamDuration}[1]{\gdef\GD@ExamDuration{#1}}
+\newcommand{\ExamNote}[1]{\gdef\GD@ExamNote{#1}}
+\newcommand{\ExamCode}[1]{\gdef\GD@ExamCode{#1}}
+
+\newcommand{\GD@SchoolName}{}
+\newcommand{\GD@ExamTitle}{}
+\newcommand{\GD@SubjectName}{}
+\newcommand{\GD@ExamDuration}{}
+\newcommand{\GD@ExamNote}{}
+\newcommand{\GD@ExamCode}{}
+\newcommand{\GD@StudentNameLabel}{Họ và tên}
+\newcommand{\GD@StudentIDLabel}{Số báo danh}
+
+% -------------------------
+% Global mode: exam / solution
+% -------------------------
+\newif\ifshowanswers
+\showanswersfalse % default = exam version
+
+\newcommand{\ExamMode}{\showanswersfalse}
+\newcommand{\SolutionMode}{\showanswerstrue}
+
+% -------------------------
+% Configurable labels and QR behavior
+% -------------------------
+\newcommand{\SetSolutionTitle}[1]{\gdef\GD@SolutionTitle{#1}}
+\newcommand{\SetAnswerLabel}[1]{\gdef\GD@AnswerLabel{#1}}
+\newcommand{\SetTrueSymbol}[1]{\gdef\GD@TrueSymbol{#1}}
+\newcommand{\SetFalseSymbol}[1]{\gdef\GD@FalseSymbol{#1}}
+
+\newcommand{\GD@SolutionTitle}{Hướng dẫn giải}
+\newcommand{\GD@AnswerLabel}{Đáp số:}
+\newcommand{\GD@TrueSymbol}{Đ}
+\newcommand{\GD@FalseSymbol}{S}
+
+\newif\ifGDShowHeaderQR
+\GDShowHeaderQRfalse
+\newcommand{\ShowHeaderQR}{\GDShowHeaderQRtrue}
+\newcommand{\HideHeaderQR}{\GDShowHeaderQRfalse}
+
+\newcommand{\ExamQR}[1]{\gdef\GD@ExamQR{#1}}
+\newcommand{\GD@ExamQR}{}
+\newcommand{\GDQRWidth}{2.6cm}
+
+% A single command to set all fields quickly
+\NewDocumentCommand{\ExamInfo}{m m m m m m}{%
+  \SchoolName{#1}%
+  \ExamTitle{#2}%
+  \SubjectName{#3}%
+  \ExamDuration{#4}%
+  \ExamNote{#5}%
+  \ExamCode{#6}%
+}
+
+% -------------------------
+% 5) Exam title block
+% -------------------------
+\newcommand{\MakeExamHeader}{%
+  \par\noindent\small
+  \begin{minipage}[t]{0.24\linewidth}
+    \vspace{0pt}
+    \centering
+    {\bfseries \GD@SchoolName\par}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.56\linewidth}
+    \vspace{0pt}
+    \centering
+    {\bfseries \GD@ExamTitle\par}
+    \vspace{2pt}
+    {\bfseries Môn: \GD@SubjectName\par}
+    \vspace{2pt}
+    Thời gian làm bài: \GD@ExamDuration\ifstrempty{\GD@ExamNote}{}{, \GD@ExamNote}.\par
+    \vspace{2pt}
+    \ifstrempty{\GD@ExamCode}{}{{\bfseries Mã đề: \GD@ExamCode\par}}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.16\linewidth}
+    \vspace{0pt}
+    \centering
+      \ifGDShowHeaderQR
+        \ifstrempty{\GD@ExamQR}{}{%
+          \includegraphics[width=\GDQRWidth]{\GD@ExamQR}\par
+        }
+      \fi
+  \end{minipage}
+  \par\vspace{\GDExamBlockSep}%
+}
+
+% Optional student information line
+\newcommand{\MakeStudentInfoLine}{%
+  \par\noindent\normalsize \GD@StudentNameLabel: \dotfill \hfill \GD@StudentIDLabel: \dotfill \par
+  \vspace{\GDExamBlockSep}%
+}
+\makeatother
+
+% -------------------------
+% 6) Counters
+% -------------------------
+\newcounter{examPart}
+\newcounter{examQuestion}[examPart]
+
+\renewcommand{\theexamPart}{\arabic{examPart}}
+\renewcommand{\theexamQuestion}{\arabic{examQuestion}}
+
+% utility setters
+\newcommand{\SetExamPartStart}[1]{\setcounter{examPart}{\numexpr#1-1\relax}}
+\newcommand{\SetExamQuestionStart}[1]{\setcounter{examQuestion}{\numexpr#1-1\relax}}
+
+% -------------------------
+% 7) Part heading
+% Requirement: auto numbering + configurable start + points + description
+% Usage:
+%   \ExamPart{Phần trắc nghiệm}{3,0}{Chọn đáp án đúng nhất.}
+%   \ExamPart[5]{Phần tự luận}{7,0}{Trình bày đầy đủ lời giải.}
+% -------------------------
+\NewDocumentCommand{\ExamPart}{O{} m m m}{%
+  \par\vspace{\GDExamBlockSep}%
+  \ifstrempty{#1}{}{%
+    \setcounter{examPart}{\numexpr#1-1\relax}%
+  }%
+  \refstepcounter{examPart}%
+  \setcounter{examQuestion}{0}%
+  \noindent\textbf{Phần \theexamPart.\ \textit{#2}\ (#3 điểm)}\par
+  \noindent\textit{#4}\par
+  \vspace{\GDExamPartAfterSkip}%
+}
+
+% -------------------------
+% 8) Question heading
+% Requirement: auto numbering
+% Usage:
+%   \Question Nội dung...
+% -------------------------
+\NewDocumentCommand{\Question}{}{%
+  \par\vspace{\GDExamQuestionSkip}%
+  \refstepcounter{examQuestion}%
+  \noindent{\bfseries\color{GDDeepBlue}Câu \theexamQuestion. }\ignorespaces
+}
+
+% Robust alternative to \Question (uses \textbf + \textcolor instead of \bfseries\color)
+\NewDocumentCommand{\NQuestion}{}{%
+  \par\vspace{\GDExamQuestionSkip}%
+  \refstepcounter{examQuestion}%
+  \noindent\textbf{\textcolor{GDDeepBlue}{Câu~\theexamQuestion.}}\ \ignorespaces
+}
+
+% Optional question line with score tag if needed later
+\NewDocumentCommand{\QuestionWithPoints}{m}{%
+  \par\vspace{\GDExamQuestionSkip}%
+  \refstepcounter{examQuestion}%
+  \noindent{\bfseries\color{GDDeepBlue}Câu \theexamQuestion. }\ignorespaces
+  \hfill {\GDTag{GDOrange!85!black}{#1 điểm}}\par
+  \noindent\ignorespaces
+}
+
+% -------------------------
+% 9) a), b), c), d) sub-questions
+% Requirement: auto letter increase + configurable start (default a)
+% Usage:
+%   \begin{SubQuestions}
+%     \item ...
+%   \end{SubQuestions}
+%
+%   \begin{SubQuestions}[3] % starts at c)
+%     \item ...
+%   \end{SubQuestions}
+% -------------------------
+\NewDocumentEnvironment{SubQuestions}{O{1}}{%
+  \begin{enumerate}[
+    label=\alph*),
+    leftmargin=2.1em,
+    itemsep=\GDListItemSep,
+    topsep=\GDListTopSep
+  ]
+  \setcounter{enumi}{\numexpr#1-1\relax}
+}{%
+  \end{enumerate}
+}
+
+% -------------------------
+% 10) Multiple choice labels A. B. C. D.
+% Requirement: 3 layouts
+% - 4 choices on 1 line
+% - 2 choices on each line, 2 lines total
+% - 1 choice per line, 4 lines total
+% -------------------------
+\newcounter{GDExamChoiceCounter}
+\newcommand{\ResetExamChoices}{\setcounter{GDExamChoiceCounter}{0}}
+\newcommand{\ExamChoiceLabel}{\stepcounter{GDExamChoiceCounter}\textbf{\Alph{GDExamChoiceCounter}.}}
+\newcommand{\ExamChoiceText}[1]{\ExamChoiceLabel\,#1}
+
+% -------------------------
+% Answer highlight and solution helpers
+% -------------------------
+\providecolor{GDAnswerGreen}{HTML}{D9F2D9}
+\providecolor{GDAnswerBorder}{HTML}{4CAF50}
+
+\newcommand{\AnswerHighlight}[1]{%
+  \tikz[baseline=(n.base)]\node[
+    fill=GDAnswerGreen,
+    draw=GDAnswerBorder,
+    rounded corners=2pt,
+    inner xsep=3pt,
+    inner ysep=2pt
+  ] (n) {#1};%
+}
+
+\newcommand{\GDIfEqIgnoreCase}[4]{%
+  \begingroup
+  \edef\GDTempA{\expandafter\lowercase\expandafter{#1}}%
+  \edef\GDTempB{\expandafter\lowercase\expandafter{#2}}%
+  \ifdefstrequal{\GDTempA}{\GDTempB}{\endgroup#3}{\endgroup#4}%
+}
+
+\newcommand{\GDChoiceLabelFromIndex}[1]{%
+  \ifcase#1\relax ?\or A\or B\or C\or D\else ?\fi
+}
+
+\newcommand{\GDChoiceItem}[3]{%
+  % #1 = choice index (1..4)
+  % #2 = displayed text
+  % #3 = optional correct index (1..4), empty = no highlight
+  \ifshowanswers
+    \ifstrempty{#3}{%
+      \textbf{\GDChoiceLabelFromIndex{#1}.}~#2%
+    }{%
+      \ifnum#1=#3\relax
+        \AnswerHighlight{\textbf{\GDChoiceLabelFromIndex{#1}.}~#2}%
+      \else
+        \textbf{\GDChoiceLabelFromIndex{#1}.}~#2%
+      \fi
+    }%
+  \else
+    \textbf{\GDChoiceLabelFromIndex{#1}.}~#2%
+  \fi
+}
+
+\NewDocumentCommand{\SolutionBlock}{m}{%
+  \ifshowanswers
+    \par\smallskip
+    \begin{center}
+      \noindent\textbf{\csname GD@SolutionTitle\endcsname}\par
+    \end{center}
+    \noindent #1\par
+  \fi
+}
+
+\NewDocumentCommand{\AnswerLine}{m}{%
+  \ifshowanswers
+    \par\smallskip
+    \noindent\textbf{\csname GD@AnswerLabel\endcsname\ }\AnswerHighlight{#1}\par
+  \fi
+}
+
+\newcommand{\GDTrueFalseSymbol}[1]{%
+  \GDIfEqIgnoreCase{#1}{true}{\csname GD@TrueSymbol\endcsname}{\csname GD@FalseSymbol\endcsname}%
+}
+
+\NewDocumentCommand{\TFItem}{m m}{%
+  % #1 = true/false (case-insensitive)
+  % #2 = statement text
+  \item #2%
+  \ifshowanswers
+    \hfill \AnswerHighlight{\textbf{\GDTrueFalseSymbol{#1}}}%
+  \fi
+}
+
+% 4 choices on one line, optional answer letter as 5th braced arg
+\newcommand{\GDChoicesOneLineWithAnswer}[5]{%
+  \par\ResetExamChoices
+  \noindent
+  \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X@{\hspace{\GDExamChoiceSep}}>{\raggedright\arraybackslash}X@{\hspace{\GDExamChoiceSep}}>{\raggedright\arraybackslash}X@{\hspace{\GDExamChoiceSep}}>{\raggedright\arraybackslash}X@{}}
+    \GDChoiceItem{1}{#1}{#5} & \GDChoiceItem{2}{#2}{#5} & \GDChoiceItem{3}{#3}{#5} & \GDChoiceItem{4}{#4}{#5}
+  \end{tabularx}
+  \par
+}
+
+\newcommand{\GDChoicesOneLineNoAnswer}[4]{%
+  \par\ResetExamChoices
+  \noindent
+  \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X@{\hspace{\GDExamChoiceSep}}>{\raggedright\arraybackslash}X@{\hspace{\GDExamChoiceSep}}>{\raggedright\arraybackslash}X@{\hspace{\GDExamChoiceSep}}>{\raggedright\arraybackslash}X@{}}
+    \GDChoiceItem{1}{#1}{} & \GDChoiceItem{2}{#2}{} & \GDChoiceItem{3}{#3}{} & \GDChoiceItem{4}{#4}{}
+  \end{tabularx}
+  \par
+}
+
+\makeatletter
+\newcommand{\ChoicesOneLine}[4]{%
+  \@ifnextchar\bgroup
+    {\GDChoicesOneLineWithAnswer{#1}{#2}{#3}{#4}}%
+    {\GDChoicesOneLineNoAnswer{#1}{#2}{#3}{#4}}%
+}
+\makeatother
+
+% 2 choices per line, 2 lines, optional answer letter as 5th braced arg
+\newcommand{\GDChoicesTwoLinesWithAnswer}[5]{%
+  \par\ResetExamChoices
+  \noindent
+  \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X@{\hspace{\GDExamChoiceSep}}>{\raggedright\arraybackslash}X@{}}
+    \GDChoiceItem{1}{#1}{#5} & \GDChoiceItem{2}{#2}{#5} \\[\GDExamChoiceRowSep]
+    \GDChoiceItem{3}{#3}{#5} & \GDChoiceItem{4}{#4}{#5}
+  \end{tabularx}
+  \par
+}
+
+\newcommand{\GDChoicesTwoLinesNoAnswer}[4]{%
+  \par\ResetExamChoices
+  \noindent
+  \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X@{\hspace{\GDExamChoiceSep}}>{\raggedright\arraybackslash}X@{}}
+    \GDChoiceItem{1}{#1}{} & \GDChoiceItem{2}{#2}{} \\[\GDExamChoiceRowSep]
+    \GDChoiceItem{3}{#3}{} & \GDChoiceItem{4}{#4}{}
+  \end{tabularx}
+  \par
+}
+
+\makeatletter
+\newcommand{\ChoicesTwoLines}[4]{%
+  \@ifnextchar\bgroup
+    {\GDChoicesTwoLinesWithAnswer{#1}{#2}{#3}{#4}}%
+    {\GDChoicesTwoLinesNoAnswer{#1}{#2}{#3}{#4}}%
+}
+\makeatother
+
+% 1 choice per line, 4 lines, optional answer letter as 5th braced arg
+\newcommand{\GDChoicesFourLinesWithAnswer}[5]{%
+  \par\ResetExamChoices
+  \noindent
+  \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X@{}}
+    \GDChoiceItem{1}{#1}{#5} \\[\GDExamChoiceRowSep]
+    \GDChoiceItem{2}{#2}{#5} \\[\GDExamChoiceRowSep]
+    \GDChoiceItem{3}{#3}{#5} \\[\GDExamChoiceRowSep]
+    \GDChoiceItem{4}{#4}{#5}
+  \end{tabularx}
+  \par
+}
+
+\newcommand{\GDChoicesFourLinesNoAnswer}[4]{%
+  \par\ResetExamChoices
+  \noindent
+  \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X@{}}
+    \GDChoiceItem{1}{#1}{} \\[\GDExamChoiceRowSep]
+    \GDChoiceItem{2}{#2}{} \\[\GDExamChoiceRowSep]
+    \GDChoiceItem{3}{#3}{} \\[\GDExamChoiceRowSep]
+    \GDChoiceItem{4}{#4}{}
+  \end{tabularx}
+  \par
+}
+
+\makeatletter
+\newcommand{\ChoicesFourLines}[4]{%
+  \@ifnextchar\bgroup
+    {\GDChoicesFourLinesWithAnswer{#1}{#2}{#3}{#4}}%
+    {\GDChoicesFourLinesNoAnswer{#1}{#2}{#3}{#4}}%
+}
+\makeatother
+
+% Lowercase aliases for convenience
+\let\choiceoneline\ChoicesOneLine
+\let\choicetwolines\ChoicesTwoLines
+\let\choicefourlines\ChoicesFourLines
+
+% -------------------------
+% 11) Convenience wrappers for common exam sections
+% -------------------------
+\newcommand{\PartTracNghiem}[2]{\ExamPart{Trắc nghiệm}{#1}{#2}}
+\newcommand{\PartDungSai}[2]{\ExamPart{Đúng -- Sai}{#1}{#2}}
+\newcommand{\PartTuLuan}[2]{\ExamPart{Tự luận}{#1}{#2}}
+
+% -------------------------
+% 12) Optional boxed answer area / writing lines
+% -------------------------
+\newcommand{\ExamDottedLines}[1]{%
+  \par\noindent
+  \foreach \i in {1,...,#1}{%
+    \noindent\tikz{\draw[GDDeepBlue!60, dotted, line width=\DottedLineWidth] (0,0) -- (\linewidth,0);}\[\DottedLineGap]
+  }%
+}
+
+% -------------------------
+% 13) Mini demo header/footer for exam pages
+% -------------------------
+\newcommand{\SetExamHeader}[2]{%
+  \pagestyle{fancy}
+  \fancyhf{}
+  \fancyhead[L]{\scriptsize\color{GDDeepBlue}#2\;\textbf{\thepage/\pageref{LastPage}}}
+  \fancyhead[R]{\scriptsize\color{GDDeepBlue}#1}
+  \fancyfoot[R]{\scriptsize\color{GDDeepBlue}#2\;\textbf{\thepage/\pageref{LastPage}}}
+  % Last page style with --- HẾT --- marker
+  \fancypagestyle{lastexampage}{%
+    \fancyhf{}
+    \fancyhead[L]{\scriptsize\color{GDDeepBlue}#2\;\textbf{\thepage/\pageref{LastPage}}}
+    \fancyhead[R]{\scriptsize\color{GDDeepBlue}#1}
+    \fancyfoot[R]{\scriptsize\color{GDDeepBlue}#2\;\textbf{\thepage/\pageref{LastPage}}}
+  }%
+  \AtEndDocument{\thispagestyle{lastexampage}}%
+}
+
+% -------------------------
+% 14) Example usage (comment only)
+% -------------------------
+% \ExamInfo{THPT ABC}{ĐỀ KIỂM TRA GIỮA KÌ I -- NĂM HỌC 2025--2026}{Toán 10}{90 phút}[Đề có 02 trang]
+% \SetExamHeader{Đề kiểm tra Toán 10}{Trang}
+% \MakeExamHeader
+% \MakeStudentInfoLine
+%
+% \ExamPart{Trắc nghiệm}{3}{Chọn đáp án đúng nhất cho mỗi câu sau.}
+% \Question Cho hàm số \(f\left(x\right)=x^2\). Giá trị \(f(2)\) là:
+% \ChoicesOneLine{1}{2}{4}{8}
+%
+% \Question Tập nghiệm của phương trình \(x^2=1\) là:
+% \ChoicesTwoLines{\(\{-1;1\}\)}{\(\{1\}\)}{\(\{-1\}\)}{\(\varnothing\)}
+%
+% \ExamPart{Đúng -- Sai}{2}{Xét từng ý sau và xác định đúng hay sai.}
+% \Question Với hàm số \(y=x^2\):
+% \begin{SubQuestions}
+%   \item Đồ thị đi qua gốc tọa độ.
+%   \item Đồ thị nhận trục \(Oy\) làm trục đối xứng.
+%   \item Hàm số nghịch biến trên \(\mathbb{R}\).
+%   \item \(f(-1)=1\).
+% \end{SubQuestions}
+%
+% \ExamPart[5]{Tự luận}{5}{Trình bày đầy đủ lời giải.}
+% \Question Giải phương trình \(x^2-5x+6=0\).
+% \begin{SubQuestions}[2]
+%   \item Phân tích đa thức thành nhân tử.
+%   \item Suy ra nghiệm của phương trình.
+% \end{SubQuestions}
+

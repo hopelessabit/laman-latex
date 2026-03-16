@@ -1,0 +1,506 @@
+% =========================================================
+% macros.tex  (layout inspired by the provided sample pages)
+% Target compiler: XeLaTeX
+% =========================================================
+
+% -------------------------
+% 0) Extra packages not in preamble_1
+% -------------------------
+% preamble_1 already loads: fontspec, xcolor, tikz, tcolorbox, tabularx,
+%   enumitem, fancyhdr, titlesec, ifthen, amsmath, hyperref, pgfplots
+% Only load what preamble_1 does NOT provide:
+\RequirePackage{graphicx}
+\RequirePackage{calc}
+\RequirePackage{eso-pic}
+\RequirePackage{etoolbox}
+\usetikzlibrary{positioning,shapes.geometric,shapes.misc,shapes.symbols}
+\tcbuselibrary{skins,breakable,theorems}
+
+% -------------------------
+% 1) Global look & feel
+% -------------------------
+% Color palette (close to the screenshots)
+\definecolor{GDBlue}{HTML}{127BBE}      % cyan/blue for headings
+\definecolor{GDDeepBlue}{HTML}{0D67B5}  % strong blue bars
+\definecolor{GDPink}{HTML}{C1007A}      % magenta ribbon
+\definecolor{GDOrange}{HTML}{C8741D}    % orange exercise bar
+\definecolor{GDPurple}{HTML}{6D2C91}    % purple "Dạng" box
+\definecolor{GDTeal}{HTML}{0E8C8C}      % teal section number
+\definecolor{GDLiteBlue}{HTML}{EAF5FF}  % light blue box background
+\definecolor{GDLiteGray}{HTML}{F5F7FA}
+
+% Fonts and spacing are defined in preamble_1 — format_2 does not override them.
+% List spacing inherits from preamble_1's parskip + setstretch.
+\setlist[itemize]{leftmargin=*, itemsep=\GDListItemSep, topsep=\GDListTopSep}
+\setlist[enumerate]{leftmargin=*, itemsep=\GDListItemSep, topsep=\GDListTopSep}
+
+% Global box sizing & spacing defaults
+\tcbset{
+  enhanced,
+  breakable,
+  % rounded corners like the sample pages
+  rounded corners,
+  arc=\GDBoxArc,
+  boxrule=\GDDefaultBoxRule,
+  colback=white,
+  left=\GDBoxPadH,right=\GDBoxPadH,top=\GDBoxPadV,bottom=\GDBoxPadV,
+}
+
+% Layout preset hooks (no-ops; spacing is owned by preamble_1)
+\newcommand{\GDLayoutDefault}{}
+\newcommand{\GDLayoutTight}{}
+
+% -------------------------
+% 2) Header / footer (book-like)
+% -------------------------
+\newcommand{\GDSetHeader}[2]{%
+  % #1: left header text, #2: right header text
+  \pagestyle{fancy}
+  \fancyhf{}
+
+  % Top blue line with rounded corner feel
+  \fancyhead[C]{%
+    \begin{tikzpicture}[baseline=(n.base)]
+      \node[inner sep=0pt, outer sep=0pt] (n) {\phantom{X}};
+      \draw[GDDeepBlue, line width=\GDHeaderRuleWidth, rounded corners=6pt]
+        (0,0.22) -- (0.65\linewidth,0.22)
+        .. controls +(0.8,0) and +(-0.8,0) .. (0.95\linewidth,0.22)
+        -- (\linewidth,0.22);
+    \end{tikzpicture}%
+  }
+
+  \fancyhead[L]{\scriptsize\color{GDDeepBlue}#1}
+  \fancyhead[R]{\scriptsize\color{GDDeepBlue}#2\;\textbf{\thepage}}
+
+  % Bottom bar
+  \fancyfoot[C]{%
+    \begin{tikzpicture}[baseline=(n.base)]
+      \node[inner sep=0pt, outer sep=0pt] (n) {\phantom{X}};
+      \draw[GDDeepBlue, line width=\GDHeaderRuleWidth] (0,0.22) -- (\linewidth,0.22);
+    \end{tikzpicture}%
+  }
+}
+
+% A convenience default header (override in your main file if you want)
+\GDSetHeader{Chương 1. MẪU CHUYÊN ĐỀ}{Trang}
+
+% -------------------------
+% 3) Title styles
+% -------------------------
+\titleformat{\section}
+  {\Large\bfseries\color{GDTeal}}
+  {}{0em}{}
+\titleformat{\subsection}
+  {\large\bfseries\color{GDDeepBlue}}
+  {}{0em}{}
+
+% -------------------------
+% 4) Top chapter banner + lesson line
+% -------------------------
+% \ChapterBanner{1}{MẪU CHUYÊN ĐỀ SỐ 2, MẪU CHUYÊN ĐỀ SỐ 2}
+\newcommand{\ChapterBanner}[2]{%
+  \begin{tikzpicture}
+    \fill[GDDeepBlue] (0,0) rectangle (\linewidth,0.25);
+    \fill[GDDeepBlue] (0,0.25) rectangle (0.66\linewidth,0.34);
+
+    \node[anchor=west, text=white, font=\bfseries\large] at (0.02\linewidth,0.12) {\strut};
+
+    \node[anchor=east, text=GDDeepBlue, font=\bfseries\Large] at (\linewidth, -0.15) {\strut};
+
+    % Right "Chương" label
+    \node[anchor=east, text=GDBlue, font=\bfseries\itshape\LARGE] at (\linewidth,0.55) {Ch\'\uong\;#1};
+    % Main title centered
+    \node[anchor=north, text=GDBlue, font=\bfseries\Huge, align=center] at (0.70\linewidth,0.28) {#2};
+
+    % Decorative slashes
+    \fill[GDBlue] (0.57\linewidth,0.02) rectangle (0.60\linewidth,0.22);
+    \fill[GDBlue!60] (0.61\linewidth,0.02) rectangle (0.63\linewidth,0.22);
+  \end{tikzpicture}
+  \vspace{\ChapterBannerBelowSkip}
+}
+
+% \LessonLine{Bài số}{1}{BẤT PHƯƠNG TRÌNH BẬC HAI MỘT ẨN}
+\newcommand{\LessonLine}[3]{%
+  \begin{tikzpicture}
+    \node[anchor=west, draw=GDPink!80, fill=GDPink!8, minimum height=0.85cm,
+          minimum width=\linewidth, inner xsep=10pt, inner ysep=6pt] (bar) at (0,0) {};
+
+    % left tag
+    \node[anchor=west, fill=GDOrange, text=white, font=\bfseries, rounded corners=2pt,
+          inner xsep=8pt, inner ysep=3pt] at ($(bar.west)+(0.18cm,0)$) {#1};
+
+    % red circle number
+    \node[circle, fill=red!85!black, text=white, font=\bfseries, inner sep=1.8pt]
+      at ($(bar.west)+(1.62cm,0)$) {#2};
+
+    % main title
+    \node[anchor=west, text=GDPurple, font=\bfseries\Large]
+      at ($(bar.west)+(2.25cm,0)$) {#3};
+
+    % right slashes
+    \fill[GDPurple!55] ($(bar.east)+(-1.35cm,-0.18cm)$) rectangle ($(bar.east)+(-1.05cm,0.18cm)$);
+    \fill[GDPurple!30] ($(bar.east)+(-0.95cm,-0.18cm)$) rectangle ($(bar.east)+(-0.65cm,0.18cm)$);
+    \fill[GDPurple!15] ($(bar.east)+(-0.55cm,-0.18cm)$) rectangle ($(bar.east)+(-0.25cm,0.18cm)$);
+  \end{tikzpicture}
+  \vspace{\LessonLineBelowSkip}
+}
+
+% -------------------------
+% 5) Section ribbon (A/B/C/D blocks)
+% -------------------------
+% \SectionRibbon{A}{Tóm tắt lí thuyết}
+\newcommand{\SectionRibbon}[2]{%
+  \vspace{\SectionRibbonAboveSkip}
+  \noindent
+  \begin{tikzpicture}
+    \node[anchor=west, fill=GDPink, text=white, font=\bfseries\Large, inner xsep=10pt, inner ysep=6pt] (tag) at (0,0) {#1};
+    \fill[GDPink!50] ($(tag.east)+(0.12cm,-0.22cm)$) rectangle ($(tag.east)+(0.48cm,0.22cm)$);
+    \fill[GDPink!25] ($(tag.east)+(0.55cm,-0.22cm)$) rectangle ($(tag.east)+(0.92cm,0.22cm)$);
+    \node[anchor=west, text=GDPink, font=\bfseries\Large] at ($(tag.east)+(1.05cm,0)$) {#2};
+  \end{tikzpicture}
+  \vspace{\SectionRibbonBelowSkip}
+}
+
+% -------------------------
+% 6) Utility commands
+% -------------------------
+\newcommand{\DK}{\textbf{ĐKXĐ}}
+\newcommand{\Buoc}{\textbf{Bước}}
+
+% Auto-wrap 3 columns helper
+\newcommand{\ThreeColTab}[1]{%
+\small
+\setlength{\tabcolsep}{\ThreeColTabSep}%
+\renewcommand{\arraystretch}{1.28}%
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}%
+#1
+\end{tabularx}%
+\normalsize
+}
+
+\newcommand{\m}[1]{\(\displaystyle #1\)}
+
+% -------------------------
+% 7) Tcolorbox tag helper
+% -------------------------
+% Small inline tag used in box titles
+\newcommand{\GDTag}[2]{%
+  \tikz[baseline=(n.base)]\node (n) [fill=#1, text=white, font=\bfseries\footnotesize,
+    rounded corners=2pt, inner xsep=\GDTagPadX, inner ysep=\GDTagPadY] {#2};%
+}
+
+% -------------------------
+% 7.1) Page background / watermark (optional)
+% -------------------------
+% Full-page background image (e.g., watermark mascot). Usage:
+%   \GDSetWatermark{watermark.pdf}{0.10}{0.85}
+% You can pass pdf/png/jpg. For emf, convert to pdf first.
+\newcommand{\GDSetWatermark}[3]{%
+  % #1 file, #2 opacity (0..1), #3 scale
+  \AddToShipoutPictureBG*{%
+    \AtPageCenter{%
+      \begin{tikzpicture}
+        \node[opacity=#2] {\includegraphics[scale=#3]{#1}};
+      \end{tikzpicture}%
+    }%
+  }%
+}
+
+% Remove watermark if needed
+\newcommand{\GDClearWatermark}{\ClearShipoutPictureBG}
+
+% -------------------------
+% 7.2) Small numbered subheader ("1 Phần nội dung thứ nhất")
+% -------------------------
+% Usage: \GDSubHeader{1}{Phần nội dung thứ nhất}
+\newcommand{\GDSubHeader}[2]{%
+  \vspace{\GDSubHeaderAboveSkip}\noindent
+  \begin{tikzpicture}
+    \node[rounded corners=2.5pt, fill=GDTeal, text=white, font=\bfseries, inner xsep=10pt, inner ysep=4pt] (n) {#1};
+    \node[anchor=west, font=\bfseries\large, text=GDTeal] at ($(n.east)+(8pt,0)$) {#2};
+  \end{tikzpicture}\par\vspace{\GDSubHeaderBelowSkip}
+}
+
+% -------------------------
+% 8) Theorem-like boxes (Định nghĩa/Định lí/Hệ quả/Nhận xét/Ghi nhớ)
+% -------------------------
+% Usage: \begin{gdDefinition}{1.1} ... \end{gdDefinition}
+\newtcolorbox{gdDefinition}[1]{
+  colframe=red!55!black,
+  colback=red!3,
+  title={\GDTag{red!70!black}{\,\large$\lightning$\;}\;\textbf{Định nghĩa\;#1}},
+}
+
+\newtcolorbox{gdTheorem}[1]{
+  colframe=blue!60!black,
+  colback=blue!3,
+  title={\GDTag{blue!70!black}{\,\large$\lightning$\;}\;\textbf{Định lí\;#1}},
+}
+
+\newtcolorbox{gdCorollary}[1]{
+  colframe=green!55!black,
+  colback=green!3,
+  title={\GDTag{green!60!black}{\,\large$\lightning$\;}\;\textbf{Hệ quả\;#1}},
+}
+
+\newtcolorbox{gdRemark}[1]{
+  colframe=ForestGreen!55!black,
+  colback=ForestGreen!3,
+  title={\GDTag{ForestGreen!70!black}{\,\large$\lightning$\;}\;\textbf{Nhận xét\;#1}},
+}
+
+\newtcolorbox{gdWarning}{
+  colframe=red!65!black,
+  colback=red!2,
+  title={\GDTag{red!75!black}{\Large$\triangle$}\;\textbf{Lưu ý}},
+}
+
+\newtcolorbox{gdMemory}[1]{
+  colframe=GDTeal!70!black,
+  colback=GDTeal!6,
+  title={\GDTag{GDTeal!80!black}{\Large$\checkmark$}\;\textbf{GHI NHỚ\;--\;#1}},
+}
+
+% -------------------------
+% 9) Exercise / Example boxes ("Ví dụ", "Bài", "Câu")
+% -------------------------
+% Usage: \begin{gdExample}{5} ... \end{gdExample}
+\newtcolorbox{gdExample}[1]{
+  colframe=GDBlue!90!black,
+  colback=GDLiteBlue,
+  boxrule=\GDExampleBoxRule,
+  title={\GDTag{GDBlue!90!black}{\,\small$\diamond$\;}\;\textbf{Ví dụ\;#1}},
+}
+
+\newtcolorbox{gdPractice}[1]{
+  colframe=GDOrange!85!black,
+  colback=GDOrange!4,
+  boxrule=\GDExampleBoxRule,
+  title={\GDTag{GDOrange!85!black}{\,\small$\diamond$\;}\;\textbf{Bài\;#1}},
+}
+
+\newtcolorbox{gdQuestion}[1]{
+  colframe=GDPink!85!black,
+  colback=GDPink!3,
+  boxrule=\GDExampleBoxRule,
+  title={\GDTag{GDPink!85!black}{\,\small$\diamond$\;}\;\textbf{Câu\;#1}},
+}
+
+% -------------------------
+% 9.1) Problem bar (like "Bài 2" line in the sample)
+% -------------------------
+% Usage:
+%   \begin{gdProblemBar}{Bài 2}
+%     Nội dung bài ... \ABCD{A}{...}{B}{...}{C}{...}{D}{...}
+%   \end{gdProblemBar}
+\newtcolorbox{gdProblemBar}[1]{
+  enhanced,
+  breakable,
+  colback=white,
+  colframe=GDOrange!80!black,
+  boxrule=\GDExampleBoxRule,
+  left=\GDBoxPadH,right=\GDBoxPadH,top=\GDProblemBarPadV,bottom=\GDProblemBarPadV,
+  arc=\GDBoxArc,
+  title={\GDTag{GDOrange!85!black}{\,\small$\diamond$\;}\;\textbf{#1}},
+}
+
+% -------------------------
+% 10) Multiple-choice bubbles + answer mark
+% -------------------------
+\newcommand{\GDCirc}[1]{%
+  \tikz[baseline=(n.base)]\node (n) [circle, draw=GDPink, very thick, text=GDPink,
+  inner sep=1.2pt, font=\bfseries\small] {#1};%
+}
+
+% \ABCD{A}{...}{B}{...}{C}{...}{D}{...}
+\newcommand{\ABCD}[8]{%
+\begin{tabularx}{\linewidth}{@{}X X@{}}
+  \GDCirc{#1}\;#2 & \GDCirc{#3}\;#4\\[2pt]
+  \GDCirc{#5}\;#6 & \GDCirc{#7}\;#8\\
+\end{tabularx}
+}
+
+% Mark chosen answer: \ChonDapAn{A}
+\newcommand{\ChonDapAn}[1]{\textit{Chọn đáp án }\GDCirc{#1}}
+
+% -------------------------
+% 11) "Lời giải" heading + dotted writing lines
+% -------------------------
+\newcommand{\LoigiaiTitle}{%
+  \vspace{\LoigiaiTitleAboveSkip}
+  \begin{center}
+    {\color{GDBlue}\bfseries\large \textbf{\raisebox{-0.2ex}{\large$\bullet$}\;Lời giải.}}
+  \end{center}
+}
+
+% \DottedLines{5}  -> 5 dotted lines for students to write
+\newcommand{\DottedLines}[1]{%
+  \par\noindent
+  \foreach \i in {1,...,#1}{%
+    \noindent\tikz{\draw[GDBlue!70, dotted, line width=\DottedLineWidth] (0,0) -- (\linewidth,0);}\\[\DottedLineGap]
+  }%
+}
+
+% Convenience environment:
+% \begin{gdSolution}[5] ... \end{gdSolution}
+\newenvironment{gdSolution}[1][4]{%
+  \def\gdSolutionLines{#1}%
+  \LoigiaiTitle
+}{%
+  \vspace{-\GDSolutionVAdjust}
+  \ifnum\gdSolutionLines>0\DottedLines{\gdSolutionLines}\fi
+}
+
+% -------------------------
+% 12) "Dạng" box (purple)
+% -------------------------
+% \begin{gdDang}{2}{Giải phương trình mũ cơ bản, phương pháp đưa về cùng cơ số} ...
+\newtcolorbox{gdDang}[2]{
+  colframe=GDPurple,
+  colback=white,
+  boxrule=\GDDangBoxRule,
+  title={\GDTag{GDPurple}{DẠNG\;#1}\;\textbf{#2}},
+}
+
+% =========================================================
+% 13) Extra polish (rounded header corners, checkbox, spacing)
+%    + Auto-numbered environments (easy mode)
+% =========================================================
+
+% -------------------------
+% 13.1) Header corner decorations + hand icon
+% -------------------------
+% A tiny "hand" icon (unicode). Works best with XeLaTeX.
+\newcommand{\GDHand}{\raisebox{0.1ex}{\scriptsize\color{GDDeepBlue}☞}}
+
+% Override \GDSetHeader to look closer to the screenshot.
+\renewcommand{\GDSetHeader}[2]{%
+  \pagestyle{fancy}
+  \fancyhf{}
+
+  % Top bar with left slashes and right rounded corner
+  \fancyhead[C]{%
+    \begin{tikzpicture}[baseline=(n.base)]
+      \node[inner sep=0pt, outer sep=0pt] (n) {\phantom{X}};
+      % main line
+      \draw[GDDeepBlue, line width=\GDHeaderRuleWidth, rounded corners=10pt]
+        (0,0.22) -- (0.78\linewidth,0.22)
+        .. controls +(0.9,0) and +(-0.9,0) .. (0.96\linewidth,0.22)
+        -- (\linewidth,0.22);
+      % left decorative slashes
+      \fill[GDDeepBlue] (0.06\linewidth,0.36) -- (0.08\linewidth,0.36) -- (0.065\linewidth,0.08) -- (0.045\linewidth,0.08) -- cycle;
+      \fill[GDDeepBlue!55] (0.09\linewidth,0.36) -- (0.11\linewidth,0.36) -- (0.095\linewidth,0.08) -- (0.075\linewidth,0.08) -- cycle;
+    \end{tikzpicture}%
+  }
+
+  \fancyhead[L]{\scriptsize\color{GDDeepBlue}#1}
+  \fancyhead[R]{\scriptsize\color{GDDeepBlue}#2\;\textbf{\thepage}\;\GDHand}
+
+  % Bottom line + left block + right block (like the sample)
+  \fancyfoot[C]{%
+    \begin{tikzpicture}[baseline=(n.base)]
+      \node[inner sep=0pt, outer sep=0pt] (n) {\phantom{X}};
+      \draw[GDDeepBlue, line width=\GDHeaderRuleWidth] (0,0.22) -- (\linewidth,0.22);
+      \fill[GDDeepBlue] (0,0.05) rectangle (0.08\linewidth,0.39);
+      \fill[GDDeepBlue] (0.88\linewidth,0.05) rectangle (\linewidth,0.39);
+    \end{tikzpicture}%
+  }
+}
+
+% -------------------------
+% 13.3) Small answer checkbox at the right side of a box
+% Uses tcolorbox overlay (no remember picture) so it never bleeds over other boxes.
+% -------------------------
+\newcommand{\GDAnswerBoxMark}{%
+  \draw[GDBlue, line width=\GDDefaultBoxRule]
+    ([xshift=-\GDAnswerMarkOffset, yshift=-\GDAnswerMarkOffset]frame.north east)
+    rectangle ++(\GDAnswerMarkSize,-\GDAnswerMarkSize);%
+}
+
+% -------------------------
+% 13.4) Auto numbering counters
+% -------------------------
+\newcounter{gdexample}
+\newcounter{gdpractice}
+\newcounter{gdquestion}
+\newcounter{gdproblem}
+\newcounter{gddang}
+
+% -------------------------
+% 13.5) Easy-to-use boxes (auto-numbered)
+% -------------------------
+% These are drop-in alternatives so you don't need to type numbers.
+
+% Example (auto): \begin{gdExampleAuto} ... \end{gdExampleAuto}
+% Optional arg = number of dotted lines at bottom (default 0 = none)
+% e.g. \begin{gdExampleAuto}[5] ... \end{gdExampleAuto}
+\newtcolorbox{gdExampleAuto}[1][0]{
+  colframe=GDBlue!90!black,
+  colback=GDLiteBlue,
+  boxrule=\GDExampleBoxRule,
+  before upper={\stepcounter{gdexample}},
+  title={\GDTag{GDBlue!90!black}{\,\small$\diamond$\;}\;\textbf{Ví dụ\;\arabic{gdexample}}},
+  overlay unbroken and last={\GDAnswerBoxMark},
+  after upper={\ifnum#1>0\par\vspace{4pt}\DottedLines{#1}\fi},
+}
+
+% Practice (auto): \begin{gdPracticeAuto} ... \end{gdPracticeAuto}
+\newtcolorbox{gdPracticeAuto}{
+  colframe=GDOrange!85!black,
+  colback=GDOrange!4,
+  boxrule=\GDExampleBoxRule,
+  before upper={\stepcounter{gdpractice}},
+  title={\GDTag{GDOrange!85!black}{\,\small$\diamond$\;}\;\textbf{Bài\;\arabic{gdpractice}}},
+  overlay unbroken and last={\GDAnswerBoxMark},
+}
+
+% Question (auto): \begin{gdQuestionAuto} ... \end{gdQuestionAuto}
+\newtcolorbox{gdQuestionAuto}{
+  colframe=GDPink!85!black,
+  colback=GDPink!3,
+  boxrule=\GDExampleBoxRule,
+  before upper={\stepcounter{gdquestion}},
+  title={\GDTag{GDPink!85!black}{\,\small$\diamond$\;}\;\textbf{Câu\;\arabic{gdquestion}}},
+  overlay unbroken and last={\GDAnswerBoxMark},
+}
+
+% Problem bar (auto): \begin{gdProblemBarAuto} ... \end{gdProblemBarAuto}
+\newtcolorbox{gdProblemBarAuto}{
+  enhanced,
+  breakable,
+  colback=white,
+  colframe=GDOrange!80!black,
+  boxrule=\GDExampleBoxRule,
+  left=\GDBoxPadH,right=\GDBoxPadH,top=\GDProblemBarPadV,bottom=\GDProblemBarPadV,
+  arc=\GDBoxArc,
+  before upper={\stepcounter{gdproblem}},
+  title={\GDTag{GDOrange!85!black}{\,\small$\diamond$\;}\;\textbf{Bài\;\arabic{gdproblem}}},
+  overlay unbroken and last={\GDAnswerBoxMark},
+}
+
+% "Dạng" (auto): \begin{gdDangAuto}{<title>} ... \end{gdDangAuto}
+\newtcolorbox{gdDangAuto}[1]{
+  colframe=GDPurple,
+  colback=white,
+  boxrule=\GDDangBoxRule,
+  before upper={\stepcounter{gddang}},
+  title={\GDTag{GDPurple}{DẠNG\;\arabic{gddang}}\;\textbf{#1}},
+}
+
+% -------------------------
+% 13.6) Better "Lời giải" block: optional solution + lines
+% -------------------------
+% Use:
+%   \begin{gdSolution}[6]
+%     ...optional text...
+%   \end{gdSolution}
+% If you want ONLY dotted lines, leave the body empty.
+\renewenvironment{gdSolution}[1][4]{%
+  \def\gdSolutionLines{#1}%
+  \LoigiaiTitle
+  \vspace{-\GDSolutionVAdjust}
+}{%
+  \vspace{-\GDSolutionVAdjust}
+  \ifnum\gdSolutionLines>0\DottedLines{\gdSolutionLines}\fi
+}
+
