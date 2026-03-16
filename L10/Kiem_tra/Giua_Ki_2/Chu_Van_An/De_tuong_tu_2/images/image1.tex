@@ -1,0 +1,12 @@
+\begin{tikzpicture}[scale=0.52]
+    \draw[->] (-4.2,0) -- (4.2,0) node[below] {$x$};
+    \draw[->] (0,-5.2) -- (0,3.2) node[left] {$y$};
+    \foreach \x in {-4,-3,-2,-1,1,2,3,4}
+      \draw (\x,0.08)--(\x,-0.08) node[below] {\scriptsize $\x$};
+    \foreach \y in {-5,-4,-3,-2,-1,1,2}
+      \draw (0.08,\y)--(-0.08,\y) node[left] {\scriptsize $\y$};
+    \draw[smooth, samples=200, domain=-2.6:2.6, thick] plot (\x, {\x*\x-4});
+    \fill (-2,0) circle (1.2pt);
+    \fill (2,0) circle (1.2pt);
+    \fill (0,-4) circle (1.2pt);
+\end{tikzpicture}

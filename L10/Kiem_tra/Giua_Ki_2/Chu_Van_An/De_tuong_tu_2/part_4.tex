@@ -1,0 +1,92 @@
+\ExamPart{Câu tự luận}{3}{ }
+
+\NQuestion Một thư viện chuẩn bị các gói quà tặng gồm đúng $1$ quyển truyện, $1$ bút và $1$ sổ tay. Biết rằng có $5$ loại truyện, $4$ loại bút và $3$ loại sổ tay.
+\begin{SubQuestions}
+  \item Hỏi có bao nhiêu cách chọn một gói quà?
+  \item Nếu mỗi gói quà được gắn một mã theo đúng thứ tự: truyện -- bút -- sổ tay, thì số mã có thay đổi không? Giải thích.
+\end{SubQuestions}
+\AnswerLine{$60$}
+\SolutionBlock{\begin{SubQuestions}
+\item Theo quy tắc nhân, số cách chọn là
+\[
+5\cdot4\cdot3=60.
+\]
+\item Mỗi mã ứng với đúng một bộ ba gồm truyện, bút, sổ tay theo thứ tự đã cho. Vì vậy số mã không thay đổi và vẫn bằng $60$.
+\end{SubQuestions}}
+
+\NQuestion Một mảnh vườn hình chữ nhật có chiều dài hơn chiều rộng $6$ m. Người ta làm lối đi rộng đều $1$ m phía trong quanh bốn cạnh, phần đất còn lại ở giữa có diện tích $80$ m$^2$.
+\begin{SubQuestions}
+  \item Tính kích thước ban đầu của mảnh vườn.
+  \item Tính diện tích lối đi.
+\end{SubQuestions}
+\AnswerLine{$8\,\text{m}$ và $14\,\text{m}$; diện tích lối đi $32\,\text{m}^2$}
+\SolutionBlock{Gọi chiều rộng ban đầu là $x$ m, chiều dài là $x+6$ m. Sau khi làm lối đi rộng $1$ m ở mỗi cạnh, phần đất còn lại có kích thước
+\[
+x-2 \quad \text{và} \quad x+4.
+\]
+Theo đề bài:
+\[
+(x-2)(x+4)=80.
+\]
+Suy ra
+\[
+x^2+2x-88=0 \Leftrightarrow (x-8)(x+11)=0.
+\]
+Vì $x>0$ nên $x=8$. Do đó kích thước ban đầu là $8$ m và $14$ m.
+Diện tích ban đầu là $8\cdot14=112$ m$^2$, diện tích phần còn lại là $80$ m$^2$, nên diện tích lối đi là $32$ m$^2$.}
+
+\NQuestion Trong mặt phẳng tọa độ $Oxy$, cho ba điểm $A(0;2)$, $B(4;4)$, $C(6;0)$.
+\begin{SubQuestions}
+  \item Tính tọa độ các vectơ $\overrightarrow{AB}$ và $\overrightarrow{AC}$.
+  \item Viết phương trình đường thẳng $BC$.
+  \item Tính khoảng cách từ điểm $A$ đến đường thẳng $BC$.
+\end{SubQuestions}
+\AnswerLine{$\overrightarrow{AB}=(4;2),\ \overrightarrow{AC}=(6;-2),\ BC:2x+y-12=0,\ d(A,BC)=\dfrac{10}{\sqrt5}=2\sqrt5$}
+\SolutionBlock{\begin{SubQuestions}
+\item Ta có
+\[
+\overrightarrow{AB}=(4-0;4-2)=(4;2),\qquad \overrightarrow{AC}=(6-0;0-2)=(6;-2).
+\]
+\item Đường thẳng $BC$ qua $B(4;4)$ và $C(6;0)$ có hệ số góc
+\[
+m=\dfrac{0-4}{6-4}=-2.
+\]
+Vậy phương trình là
+\[
+y-4=-2(x-4) \Leftrightarrow 2x+y-12=0.
+\]
+\item Khoảng cách từ $A(0;2)$ đến $BC$ là
+\[
+d(A,BC)=\dfrac{|2\cdot0+2-12|}{\sqrt{2^2+1^2}}=\dfrac{10}{\sqrt5}=2\sqrt5.
+\]
+\end{SubQuestions}}
+
+\NQuestion (Câu khó) Trong mặt phẳng tọa độ $Oxy$, cho hai điểm $A(1;2)$, $B(5;4)$ và điểm $M$ thuộc trục hoành $Ox$.
+\begin{SubQuestions}
+  \item Đặt $M(t;0)$, hãy biểu diễn $MA^2+MB^2$ theo $t$.
+  \item Tìm tọa độ điểm $M$ để tổng $MA^2+MB^2$ nhỏ nhất.
+  \item Tính giá trị nhỏ nhất đó.
+\end{SubQuestions}
+\AnswerLine{$M(3;0)$,\ $\min(MA^2+MB^2)=28$}
+\SolutionBlock{\begin{SubQuestions}
+\item Với $M(t;0)$, ta có
+\[
+MA^2=(t-1)^2+(0-2)^2=(t-1)^2+4,
+\]
+\[
+MB^2=(t-5)^2+(0-4)^2=(t-5)^2+16.
+\]
+Do đó
+\[
+MA^2+MB^2=(t-1)^2+(t-5)^2+20.
+\]
+Khai triển:
+\[
+MA^2+MB^2=2t^2-12t+46=2(t-3)^2+28.
+\]
+\item Biểu thức đạt giá trị nhỏ nhất khi $t=3$. Vậy $M(3;0)$.
+\item Giá trị nhỏ nhất là
+\[
+2(3-3)^2+28=28.
+\]
+\end{SubQuestions}}

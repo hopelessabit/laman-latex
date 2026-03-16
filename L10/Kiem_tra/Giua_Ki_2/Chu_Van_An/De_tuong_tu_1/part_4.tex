@@ -1,0 +1,123 @@
+\ExamPart{Câu tự luận}{3}{ }
+
+\NQuestion Giải các yêu cầu sau:
+\begin{SubQuestions}
+  \item Giải bất phương trình $\left(x^2-7x+10\right)\left(x^2-4\right)\le0$.
+  \item Tìm tất cả các giá trị của $m$ để bất phương trình $x^2-2mx+m+2>0$ đúng với mọi $x\in\mathbb{R}$.
+\end{SubQuestions}
+\AnswerLine{$x\in[-2;5],\ m\in(-1;2)$}
+\SolutionBlock{\begin{SubQuestions}
+\item Ta có
+\[
+x^2-7x+10=(x-2)(x-5),\qquad x^2-4=(x-2)(x+2).
+\]
+Suy ra
+\[
+\left(x^2-7x+10\right)\left(x^2-4\right)=(x-2)^2(x-5)(x+2).
+\]
+Vì $(x-2)^2\ge0$ với mọi $x$, nên dấu của biểu thức phụ thuộc vào $(x-5)(x+2)$. Do đó
+\[
+(x-2)^2(x-5)(x+2)\le0 \iff (x-5)(x+2)\le0.
+\]
+Suy ra
+\[
+-2\le x\le 5.
+\]
+Vậy tập nghiệm là $[-2;5]$.
+\item Để bất phương trình
+\[
+x^2-2mx+m+2>0
+\]
+đúng với mọi $x\in\mathbb{R}$, cần và đủ:
+\[
+a=1>0\quad \text{và}\quad \Delta<0.
+\]
+Ta có
+\[
+\Delta=(-2m)^2-4(m+2)=4m^2-4m-8=4(m^2-m-2)=4(m-2)(m+1).
+\]
+Điều kiện $\Delta<0$ tương đương
+\[
+(m-2)(m+1)<0\iff -1<m<2.
+\]
+Vậy $m\in(-1;2)$.
+\end{SubQuestions}}
+
+\NQuestion Giải các phương trình sau:
+\begin{SubQuestions}
+  \item $x^2-5x+6=0$.
+  \item $x^4-10x^2+9=0$.
+\end{SubQuestions}
+\AnswerLine{$x=2,3$; $x=\pm1,\pm3$}
+\SolutionBlock{\begin{SubQuestions}
+\item Ta có
+\[
+x^2-5x+6=(x-2)(x-3)=0.
+\]
+Vậy nghiệm là $x=2$ hoặc $x=3$.
+\item Đặt $t=x^2\ (t\ge0)$, ta được
+\[
+t^2-10t+9=0\iff (t-1)(t-9)=0.
+\]
+Suy ra $t=1$ hoặc $t=9$, nên
+\[
+x=\pm1,\ \pm3.
+\]
+Vậy phương trình có bốn nghiệm $-3,-1,1,3$.
+\end{SubQuestions}}
+
+\NQuestion Trong mặt phẳng tọa độ $Oxy$, cho ba điểm $A(1;2)$, $B(5;4)$, $C(3;-2)$.
+\begin{SubQuestions}
+  \item Tính tọa độ các vectơ $\overrightarrow{AB}$ và $\overrightarrow{AC}$.
+  \item Chứng minh rằng tam giác $ABC$ vuông tại $A$.
+  \item Viết phương trình đường thẳng $BC$.
+  \item Tính khoảng cách từ điểm $A$ đến đường thẳng $BC$.
+\end{SubQuestions}
+\AnswerLine{$\overrightarrow{AB}=(4;2),\ \overrightarrow{AC}=(2;-4),\ BC:3x-y-11=0,\ d(A,BC)=\dfrac{10}{\sqrt{10}}=\sqrt{10}$}
+\SolutionBlock{\begin{SubQuestions}
+\item Ta có
+\[
+\overrightarrow{AB}=(5-1;4-2)=(4;2),\qquad \overrightarrow{AC}=(3-1;-2-2)=(2;-4).
+\]
+\item Tính tích vô hướng:
+\[
+\overrightarrow{AB}\cdot\overrightarrow{AC}=4\cdot2+2\cdot(-4)=8-8=0.
+\]
+Suy ra $\overrightarrow{AB}\perp\overrightarrow{AC}$, nên tam giác $ABC$ vuông tại $A$.
+\item Đường thẳng $BC$ đi qua $B(5;4)$ và $C(3;-2)$ nên có hệ số góc
+\[
+m=\dfrac{-2-4}{3-5}=3.
+\]
+Phương trình qua $B$ là
+\[
+y-4=3(x-5)\iff 3x-y-11=0.
+\]
+\item Khoảng cách từ $A(1;2)$ đến đường thẳng $BC$ là
+\[
+d(A,BC)=\dfrac{|3\cdot1-2-11|}{\sqrt{3^2+(-1)^2}}
+=\dfrac{10}{\sqrt{10}}=\sqrt{10}.
+\]
+\end{SubQuestions}}
+
+\NQuestion Trong mặt phẳng tọa độ $Oxy$, cho đoạn thẳng $AB$ với $A(-1;3)$, $B(5;1)$.
+\begin{SubQuestions}
+  \item Tìm tọa độ trung điểm $M$ của đoạn thẳng $AB$.
+  \item Viết phương trình đường trung trực của đoạn thẳng $AB$.
+  \item Gọi $d$ là đường thẳng đi qua $A$ và vuông góc với $AB$. Chứng minh rằng $d$ song song với đường trung trực của $AB$.
+\end{SubQuestions}
+\AnswerLine{$M(2;2)$,\ $\Delta:3x-y-4=0$}
+\SolutionBlock{\begin{SubQuestions}
+\item Trung điểm của $AB$ là
+\[
+M\left(\dfrac{-1+5}{2};\dfrac{3+1}{2}\right)=(2;2).
+\]
+\item Ta có
+\[
+\overrightarrow{AB}=(5-(-1);1-3)=(6;-2)=(3;-1)\cdot2.
+\]
+Vì đường trung trực của $AB$ vuông góc với $AB$ nên nhận một vectơ pháp tuyến cùng phương với $\overrightarrow{AB}$, chẳng hạn $(3;-1)$. Đi qua $M(2;2)$, nên phương trình là
+\[
+3(x-2)-(y-2)=0\iff 3x-y-4=0.
+\]
+\item Đường thẳng $d$ đi qua $A$ và vuông góc với $AB$, nên $d$ cũng có vectơ pháp tuyến cùng phương với $\overrightarrow{AB}=(3;-1)$. Do đó $d$ và đường trung trực của $AB$ đều vuông góc với $AB$, suy ra chúng song song với nhau.
+\end{SubQuestions}}

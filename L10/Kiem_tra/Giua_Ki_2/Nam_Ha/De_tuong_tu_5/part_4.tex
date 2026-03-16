@@ -1,0 +1,116 @@
+\ExamPart{Câu tự luận}{3}{ }
+
+\NQuestion Một xưởng sản xuất dự định làm các hộp quà giống nhau. Mỗi hộp quà gồm đúng $1$ loại bánh, $1$ loại nước uống và $1$ món quà lưu niệm. Biết rằng:
+\begin{itemize}[leftmargin=1.5em]
+\item Có $6$ loại bánh;
+\item Có $4$ loại nước uống;
+\item Có $5$ món quà lưu niệm.
+\end{itemize}
+\begin{SubQuestions}
+  \item Hỏi có bao nhiêu cách chọn một hộp quà?
+  \item Nếu xưởng muốn tạo mã cho mỗi hộp quà bằng cách ghi theo thứ tự: tên bánh -- nước uống -- quà lưu niệm, thì số mã có thay đổi không? Giải thích.
+\end{SubQuestions}
+\AnswerLine{$120$}
+\SolutionBlock{\begin{SubQuestions}
+\item Theo quy tắc nhân, số cách chọn một hộp quà là
+\[
+6\cdot4\cdot5=120.
+\]
+\item Mỗi hộp quà được xác định hoàn toàn bởi bộ ba gồm: loại bánh, loại nước uống, món quà lưu niệm. Khi ghi theo thứ tự bánh -- nước uống -- quà lưu niệm thì mỗi cách chọn tương ứng với đúng một mã. Vì vậy số mã vẫn là
+\[
+120.
+\]
+\end{SubQuestions}}
+
+\NQuestion Một khu đất hình chữ nhật có chiều dài hơn chiều rộng $8$ m. Người ta làm một lối đi rộng đều $1$ m ở phía trong dọc theo bốn cạnh, nên phần đất còn lại ở giữa là một hình chữ nhật có diện tích $108$ m$^2$. Tính kích thước ban đầu của khu đất.
+\AnswerLine{$10\,\text{m}$ và $18\,\text{m}$}
+\SolutionBlock{Gọi chiều rộng ban đầu là $x$ m, khi đó chiều dài là $x+8$ m. Sau khi làm lối đi rộng $1$ m xung quanh phía trong, kích thước phần đất còn lại là:
+\[
+x-2 \quad \text{và} \quad x+8-2=x+6.
+\]
+Theo đề bài:
+\[
+(x-2)(x+6)=108.
+\]
+Khai triển:
+\[
+x^2+4x-12=108 \Rightarrow x^2+4x-120=0.
+\]
+Phân tích:
+\[
+x^2+4x-120=(x+12)(x-10)=0.
+\]
+Vì $x>0$ nên $x=10$. Do đó chiều dài là
+\[
+10+8=18.
+\]
+Vậy kích thước ban đầu của khu đất là $10$ m và $18$ m.}
+
+\NQuestion Trong mặt phẳng tọa độ $Oxy$, cho ba điểm $A(2;1), B(6;3), C(4;-3)$.
+\begin{SubQuestions}
+  \item Tính tọa độ các vectơ $\overrightarrow{AB}$ và $\overrightarrow{AC}$.
+  \item Chứng minh tam giác $ABC$ vuông tại $A$.
+  \item Viết phương trình đường thẳng $BC$.
+  \item Tính khoảng cách từ điểm $A$ đến đường thẳng $BC$.
+\end{SubQuestions}
+\AnswerLine{$\overrightarrow{AB}=(4;2),\ \overrightarrow{AC}=(2;-4),\ BC:3x-y-15=0,\ d(A,BC)=\sqrt{10}$}
+\SolutionBlock{\begin{SubQuestions}
+\item Ta có
+\[
+\overrightarrow{AB}=(6-2;3-1)=(4;2),\qquad \overrightarrow{AC}=(4-2;-3-1)=(2;-4).
+\]
+\item Tính tích vô hướng:
+\[
+\overrightarrow{AB}\cdot\overrightarrow{AC}=4\cdot2+2\cdot(-4)=8-8=0.
+\]
+Suy ra $\overrightarrow{AB}\perp\overrightarrow{AC}$, nên tam giác $ABC$ vuông tại $A$.
+\item Đường thẳng $BC$ đi qua $B(6;3)$ và $C(4;-3)$ có hệ số góc
+\[
+m=\dfrac{-3-3}{4-6}=3.
+\]
+Phương trình qua $B$:
+\[
+y-3=3(x-6)\Leftrightarrow 3x-y-15=0.
+\]
+\item Khoảng cách từ $A(2;1)$ đến $BC$ là
+\[
+d(A,BC)=\dfrac{|3\cdot2-1-15|}{\sqrt{3^2+(-1)^2}}=\dfrac{10}{\sqrt{10}}=\sqrt{10}.
+\]
+\end{SubQuestions}}
+
+\NQuestion Một đội thiện nguyện cần di chuyển từ điểm $M(4;1)$ đến một địa điểm cứu trợ nằm trên đường thẳng
+\[
+d: x-y+1=0.
+\]
+\begin{SubQuestions}
+  \item Viết phương trình đường thẳng $\Delta$ đi qua $M$ và vuông góc với $d$.
+  \item Tìm tọa độ điểm $H$ là giao điểm của $\Delta$ với $d$.
+  \item Tính quãng đường ngắn nhất từ $M$ đến đường thẳng $d$.
+\end{SubQuestions}
+\AnswerLine{$\Delta:x+y-5=0,\ H(2;3),\ MH=2\sqrt2$}
+\SolutionBlock{\begin{SubQuestions}
+\item Đường thẳng $d:x-y+1=0$ có hệ số góc $1$. Do đó đường thẳng vuông góc với $d$ có hệ số góc $-1$. Qua $M(4;1)$, ta được:
+\[
+y-1=-(x-4)\Leftrightarrow x+y-5=0.
+\]
+\item Tọa độ $H$ là nghiệm của hệ
+\[
+\begin{cases}
+x-y+1=0\\
+x+y-5=0
+\end{cases}
+\]
+Cộng hai phương trình:
+\[
+2x-4=0 \Rightarrow x=2.
+\]
+Suy ra
+\[
+2-y+1=0 \Rightarrow y=3.
+\]
+Vậy $H(2;3)$.
+\item Quãng đường ngắn nhất từ $M$ đến đường thẳng $d$ là độ dài đoạn vuông góc $MH$:
+\[
+MH=\sqrt{(4-2)^2+(1-3)^2}=\sqrt{4+4}=2\sqrt2.
+\]
+\end{SubQuestions}}

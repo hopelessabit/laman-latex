@@ -1,0 +1,93 @@
+\ExamPart{Câu tự luận}{3}{}
+
+\NQuestion Giải bất phương trình
+\[
+\left(x^2-5x+6\right)\left(x^2-1\right)\le 0.
+\]
+\AnswerLine{$[-1;1]\cup[2;3]$}
+\SolutionBlock{Ta có
+\[
+\left(x^2-5x+6\right)\left(x^2-1\right)=(x-2)(x-3)(x-1)(x+1).
+\]
+Các nghiệm là $-1,1,2,3$. Lập bảng xét dấu theo thứ tự các nghiệm, vì hệ số bậc cao nhất dương nên dấu của biểu thức lần lượt là $+,-,+,-,+$. Do đó bất phương trình đúng khi
+\[
+x\in[-1;1]\cup[2;3].
+\]}
+
+\NQuestion Tìm tất cả các giá trị của $m$ để phương trình
+\[
+x^2-2(m+1)x+m^2+3=0
+\]
+có hai nghiệm phân biệt $x_1,x_2$ thỏa mãn $x_1+x_2>2$.
+\AnswerLine{$m>1$}
+\SolutionBlock{Theo hệ thức Viète,
+\[
+x_1+x_2=2(m+1).
+\]
+Điều kiện $x_1+x_2>2$ cho $2(m+1)>2\Rightarrow m>0$. Để phương trình có hai nghiệm phân biệt, cần và đủ $\Delta>0$. Ta có
+\[
+\Delta=[-2(m+1)]^2-4(m^2+3)=4(m+1)^2-4m^2-12=8m-8.
+\]
+Vậy $\Delta>0\Leftrightarrow m>1$. Kết hợp với $m>0$, suy ra $m>1$.}
+
+\NQuestion Trong mặt phẳng tọa độ $Oxy$, cho ba điểm $A(1;2),\ B(5;4),\ C(3;-2)$.
+\begin{SubQuestions}
+  \item Tính tọa độ các vectơ $\overrightarrow{AB}$ và $\overrightarrow{AC}$.
+  \item Chứng minh rằng tam giác $ABC$ vuông tại $A$.
+  \item Tính diện tích tam giác $ABC$.
+\end{SubQuestions}
+\AnswerLine{$\overrightarrow{AB}=(4;2),\ \overrightarrow{AC}=(2;-4),\ S_{ABC}=10$}
+\SolutionBlock{\begin{SubQuestions}
+\item Ta có
+\[
+\overrightarrow{AB}=(5-1;4-2)=(4;2),\qquad \overrightarrow{AC}=(3-1;-2-2)=(2;-4).
+\]
+\item Tính tích vô hướng:
+\[
+\overrightarrow{AB}\cdot\overrightarrow{AC}=4\cdot2+2\cdot(-4)=8-8=0.
+\]
+Vì tích vô hướng bằng $0$ nên $\overrightarrow{AB}\perp\overrightarrow{AC}$. Vậy tam giác $ABC$ vuông tại $A$.
+\item Diện tích tam giác là
+\[
+S_{ABC}=\dfrac12\left|\begin{vmatrix}4&2\\2&-4\end{vmatrix}\right|=\dfrac12|4\cdot(-4)-2\cdot2|=\dfrac12\cdot20=10.
+\]
+\end{SubQuestions}}
+
+\NQuestion Trong mặt phẳng tọa độ $Oxy$, cho điểm $A(1;2)$ và đường thẳng
+\[
+d:2x+5y-9=0.
+\]
+\begin{SubQuestions}
+  \item Viết phương trình đường thẳng $\Delta$ đi qua $A$ và vuông góc với $d$.
+  \item Gọi $H$ là giao điểm của $\Delta$ và $d$. Tính tọa độ điểm $H$ và khoảng cách từ $A$ đến đường thẳng $d$.
+\end{SubQuestions}
+\AnswerLine{$\Delta:5x-2y-1=0,\ H\left(\dfrac{23}{29};\dfrac{43}{29}\right),\ d(A,d)=\dfrac{3}{\sqrt{29}}$}
+\SolutionBlock{\begin{SubQuestions}
+\item Đường thẳng $d:2x+5y-9=0$ có vectơ pháp tuyến là $(2;5)$. Vì $\Delta\perp d$ nên có thể lấy vectơ pháp tuyến của $\Delta$ là $(5;-2)$. Vậy $\Delta$ có dạng $5x-2y+c=0$. Thay $A(1;2)$ vào, ta được $5\cdot1-2\cdot2+c=0\Rightarrow c=-1$. Suy ra
+\[
+\Delta:5x-2y-1=0.
+\]
+\item Tọa độ $H$ là nghiệm của hệ
+\[
+\begin{cases}
+2x+5y-9=0,\\
+5x-2y-1=0.
+\end{cases}
+\]
+Nhân phương trình đầu với $2$ và phương trình sau với $5$ rồi cộng lại:
+\[
+\begin{cases}
+4x+10y=18,\\
+25x-10y=5.
+\end{cases}
+\Rightarrow 29x=23\Rightarrow x=\dfrac{23}{29}.
+\]
+Thế vào $2x+5y=9$ được $y=\dfrac{43}{29}$. Do đó
+\[
+H\left(\dfrac{23}{29};\dfrac{43}{29}\right).
+\]
+Khoảng cách từ $A$ đến $d$ là
+\[
+d(A,d)=\dfrac{|2\cdot1+5\cdot2-9|}{\sqrt{2^2+5^2}}=\dfrac{3}{\sqrt{29}}.
+\]
+\end{SubQuestions}}
