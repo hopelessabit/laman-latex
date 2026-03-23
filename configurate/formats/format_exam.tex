@@ -94,6 +94,11 @@
 \newcommand{\ShowHeaderQR}{\GDShowHeaderQRtrue}
 \newcommand{\HideHeaderQR}{\GDShowHeaderQRfalse}
 
+\newif\ifGDShowExamHeader
+\GDShowExamHeadertrue
+\newcommand{\ShowExamHeader}{\GDShowExamHeadertrue}
+\newcommand{\HideExamHeader}{\GDShowExamHeaderfalse}
+
 \newcommand{\ExamQR}[1]{\gdef\GD@ExamQR{#1}}
 \newcommand{\GD@ExamQR}{}
 \newcommand{\GDQRWidth}{2.6cm}
@@ -112,35 +117,37 @@
 % 5) Exam title block
 % -------------------------
 \newcommand{\MakeExamHeader}{%
-  \par\noindent\small
-  \begin{minipage}[t]{0.24\linewidth}
-    \vspace{0pt}
-    \centering
-    {\bfseries \GD@SchoolName\par}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[t]{0.56\linewidth}
-    \vspace{0pt}
-    \centering
-    {\bfseries \GD@ExamTitle\par}
-    \vspace{2pt}
-    {\bfseries Môn: \GD@SubjectName\par}
-    \vspace{2pt}
-    Thời gian làm bài: \GD@ExamDuration\ifstrempty{\GD@ExamNote}{}{, \GD@ExamNote}.\par
-    \vspace{2pt}
-    \ifstrempty{\GD@ExamCode}{}{{\bfseries Mã đề: \GD@ExamCode\par}}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[t]{0.16\linewidth}
-    \vspace{0pt}
-    \centering
-      \ifGDShowHeaderQR
-        \ifstrempty{\GD@ExamQR}{}{%
-          \includegraphics[width=\GDQRWidth]{\GD@ExamQR}\par
-        }
-      \fi
-  \end{minipage}
-  \par\vspace{\GDExamBlockSep}%
+  \ifGDShowExamHeader
+    \par\noindent\small
+    \begin{minipage}[t]{0.24\linewidth}
+      \vspace{0pt}
+      \centering
+      {\bfseries \GD@SchoolName\par}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.56\linewidth}
+      \vspace{0pt}
+      \centering
+      {\bfseries \GD@ExamTitle\par}
+      \vspace{2pt}
+      {\bfseries Môn: \GD@SubjectName\par}
+      \vspace{2pt}
+      Thời gian làm bài: \GD@ExamDuration\ifstrempty{\GD@ExamNote}{}{, \GD@ExamNote}.\par
+      \vspace{2pt}
+      \ifstrempty{\GD@ExamCode}{}{{\bfseries Mã đề: \GD@ExamCode\par}}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.16\linewidth}
+      \vspace{0pt}
+      \centering
+        \ifGDShowHeaderQR
+          \ifstrempty{\GD@ExamQR}{}{%
+            \includegraphics[width=\GDQRWidth]{\GD@ExamQR}\par
+          }
+        \fi
+    \end{minipage}
+    \par\vspace{\GDExamBlockSep}%
+  \fi
 }
 
 % Optional student information line
@@ -424,6 +431,23 @@
 \newcommand{\PartTuLuan}[2]{\ExamPart{Tự luận}{#1}{#2}}
 
 % -------------------------
+% Two-column layout command
+% Usage: \TwoColumnLayout{left content}{right content}
+% Creates two independent minipages side by side
+% -------------------------
+\newcommand{\TwoColumnLayout}[2]{%
+  \par
+  \begin{minipage}[t]{0.48\textwidth}
+    #1
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    #2
+  \end{minipage}
+  \par
+}
+
+% -------------------------
 % 12) Optional boxed answer area / writing lines
 % -------------------------
 \newcommand{\ExamDottedLines}[1]{%
@@ -452,6 +476,12 @@
   \AtEndDocument{\thispagestyle{lastexampage}}%
 }
 
+\newcommand{\DottedLines}[1]{%
+  \par\noindent
+  \foreach \i in {1,...,#1}{%
+    \noindent\tikz{\draw[GDBlue!70, dotted, line width=\DottedLineWidth] (0,0) -- (\linewidth,0);}\\[\DottedLineGap]
+  }%
+}
 % -------------------------
 % 14) Example usage (comment only)
 % -------------------------
@@ -482,4 +512,13 @@
 %   \item Phân tích đa thức thành nhân tử.
 %   \item Suy ra nghiệm của phương trình.
 % \end{SubQuestions}
+%
+% % Two-column layout example:
+% % \TwoColumnLayout{
+% %   \NQuestion Question in left column.
+% %   \DottedLines{3}
+% % }{
+% %   \NQuestion Question in right column.
+% %   \DottedLines{3}
+% % }
 
